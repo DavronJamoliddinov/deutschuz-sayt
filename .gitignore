@@ -1,0 +1,20 @@
+# bog'liqliklar
+/node_modules
+
+# Next.js
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# muhit o'zgaruvchilari (maxfiy qiymatlar git'ga tushmaydi)
+.env*
+!.env.example
+
+# tizim va loglar
+.DS_Store
+Thumbs.db
+npm-debug.log*
+
+# muharrir sozlamalari (shaxsiy)
+.vscode/

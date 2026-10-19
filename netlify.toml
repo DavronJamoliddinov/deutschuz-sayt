@@ -1,0 +1,16 @@
+# Netlify sozlamasi.
+# 1) GitHub orqali ulansa — har push'da Netlify o'zi build qiladi (har production deploy 15 kredit; Free tarifda 300).
+# 2) Qo'lda: `npm run build`, so'ng out/ papkasini https://app.netlify.com/drop ga tashlang.
+# Kesh va xavfsizlik sarlavhalari public/_headers faylida (qo'lda joylashda ham ishlaydi).
+
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "24"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Domen va do'kon havolalari tayyor bo'lganda (yoki Netlify → Site configuration → Environment variables):
+  # SITE_URL = "https://<nom>.netlify.app"
+  # APP_STORE_URL = "https://apps.apple.com/..."
+  # GOOGLE_PLAY_URL = "https://play.google.com/store/apps/details?id=uz.deutschuz.deutschuz"

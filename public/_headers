@@ -1,0 +1,14 @@
+# Netlify sarlavhalari (build'da out/ ga ko'chadi). Boshqa hostinglar bu faylni e'tiborsiz qoldiradi.
+
+# Nomida xesh bor fayllar — o'zgarmaydi, uzoq keshlanadi
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=604800
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
