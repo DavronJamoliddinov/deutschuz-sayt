@@ -11,7 +11,7 @@ export const faqIntro = typo({
 } as const);
 
 /** Javoblar faqat CLAUDE.md da tasdiqlangan ma'lumotga tayanadi. */
-export function getFaq({ storesAvailable }: { storesAvailable: boolean }): FaqItem[] {
+export function getFaq({ storesAvailable, webPayments = false }: { storesAvailable: boolean; webPayments?: boolean }): FaqItem[] {
   return typo([
     {
       question: "DeutschUz kimlar uchun?",
@@ -36,7 +36,10 @@ export function getFaq({ storesAvailable }: { storesAvailable: boolean }): FaqIt
     {
       question: "Premium qancha turadi va qanday toʻlanadi?",
       answer:
-        "1 oy — $4.99, 3 oy — $11.99, 6 oy — $19.99, 1 yil — $29.99. Obuna ilova ichida App Store yoki Google Play orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq.",
+        "1 oy — $4.99, 3 oy — $11.99, 6 oy — $19.99, 1 yil — $29.99. Obuna ilova ichida App Store yoki Google Play orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq." +
+        (webPayments
+          ? " Oʻzbekistonda soʻmda ham toʻlash mumkin: saytdagi «Premium» sahifasida Uzcard yoki Humo kartasi bilan, Payme orqali — bir martalik toʻlov, avtomatik yangilanmaydi."
+          : ""),
     },
     {
       question: "Internetsiz ishlaydimi?",

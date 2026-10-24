@@ -41,6 +41,7 @@ Har bo'lim — o'z manzili bilan alohida sahifa:
 | `/narxlar/` | Bepul va Premium, 4 reja, so'mda taxminiy summa |
 | `/savollar/` | Ko'p so'raladigan savollar |
 | `/yuklab-olish/` | Qurilma avtomatik aniqlanadi (iPhone / Android / kompyuter), boshqasini qo'lda tanlash mumkin |
+| `/premium/` | Saytdagi bir martalik Premium to'lovi: so'mda (yonida dollar), Uzcard/Humo, Payme — menyuda yo'q (pastga qarang) |
 
 - Har sahifa — alohida HTML fayl (`out/<sahifa>/index.html`, `trailingSlash: true`): to'g'ridan-to'g'ri manzil,
   yangilash (F5) va «Orqaga / Oldinga» istalgan statik hostingda ishlaydi. Sahifalar orasida o'tish — Next.js `Link`
@@ -52,10 +53,25 @@ Har bo'lim — o'z manzili bilan alohida sahifa:
 
 ### Sayt va ilova chegarasi
 
-Saytda server ham, AI ham yo'q — u faqat ilovani tanishtiradi. AI bilan gapirish ilovaning o'zida: ilova AI proksiga
+Sayt statik, AI yo'q — u ilovani tanishtiradi. Yagona istisno — `/premium/` (pastga qarang). AI bilan gapirish ilovaning o'zida: ilova AI proksiga
 (`/v1/speak`) tanlangan vazifa ID'sini yuboradi, vazifa esa tanlangan darajaga (A1–B2) tegishli; AI yo'riqnomasi
 serverda (`CLAUDE.md`, 12_sprechen). O'qish matnlari va ularning lug'ati ham ilovada (A1–B1 — 90 ta matn, B2 va C1
 tayyorlanmoqda). Saytdagi o'qish namunasi — shu ishlashni ko'rsatuvchi bitta qisqa matn (`src/content/reading.ts`).
+
+### Saytdagi to'lov (`/premium/`, 2026-10-23)
+
+Loyiha egasi qarori: Premium saytda ham sotiladi — **bir martalik to'lov** (obuna emas, kartadan avtomatik pul
+yechilmaydi), 1/3/6 oy yoki 1 yil, narx **so'mda** (yonida do'kondagi dollar narxi), Uzcard/Humo, Payme orqali. Ilovada
+bu sahifaga havola yo'q (do'kon qoidalari). Sahifa brauzerda ilova serverining `/v1/pay/*` API'sini chaqiradi
+(`ai_proxy/payments.py`, qo'llanma ilova loyihasidagi `docs/payments.md`, 9-bo'lim): narxlar va rejalar serverdan keladi,
+karta faqat to'lov so'rovida uzatiladi (serverda saqlanmaydi), SMS kod, natija. Serverda sayt va API bitta domenda
+(Caddy `deutschuz.com/v1/pay/*` ni ilova serveriga uzatadi) — CORS kerak emas.
+
+- Forma: `src/components/sections/PremiumCheckout.tsx`, matnlar: `src/content/premium.ts`, sahifa: `src/app/premium/`.
+- Sahifa yangilansa boshlangan to'lov natijasi yo'qolmaydi (`sessionStorage` — faqat buyurtma raqami); javob kelmasa
+  holat serverdan so'raladi (qayta to'lab yuborilmaydi).
+- Sinov kassasida (Payme test) sahifa ochiq, lekin hech qayerdan havola yo'q va `noindex`; jonli kassada
+  `WEB_PAYMENTS=1` — «Narxlar» va «Savollar» da havola, sitemap'da.
 
 ## Sozlamalar
 
@@ -68,6 +84,8 @@ sayt mavjud bo'lmagan joyga havola bermaydi. Qiymatlar **build paytida** muhit o
 | `SITE_URL` | Canonical, Open Graph rasmi (`/og.png`), `sitemap.xml`. Masalan `https://deutschuz.uz` |
 | `APP_STORE_URL`, `GOOGLE_PLAY_URL` | «Yuklab olish» sahifasida va har sahifa oxiridagi blokda «… sahifasi hali yoʻq» o'rniga do'kon tugmasi; menyudagi holat matni, FAQ javobi. Faqat `https://apps.apple.com/…` va `https://play.google.com/…` manzillari qabul qilinadi — boshqasi berilsa, build xato bilan to'xtaydi |
 | `PRIVACY_URL`, `TERMS_URL` | Footer'da «Maxfiylik siyosati» va «Foydalanish shartlari» (ilova loyihasidagi `deploy/site/`: `/privacy`, `/terms`) |
+| `WEB_PAYMENTS` | `1` — saytdagi Payme to'lovi jonli: «Narxlar» va «Savollar» da `/premium/` havolasi, sahifa qidiruv tizimlari va sitemap'da. Bo'sh — sahifa ochiladi, lekin havola yo'q |
+| `PAY_API` | To'lov API manzili. Bo'sh — sahifaning o'z domeni (serverda shunday). Lokal sinov: `http://127.0.0.1:8787` (serverda `SITE_ORIGINS=http://localhost:4173`) |
 
 ```powershell
 $env:SITE_URL = "https://deutschuz.uz"; $env:APP_STORE_URL = "https://apps.apple.com/..."; npm run build

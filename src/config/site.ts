@@ -43,6 +43,17 @@ export const site = {
   /** Ilova loyihasidagi deploy/site/ sahifalari (serverda /privacy, /terms). Joylangach yoziladi. */
   privacyUrl: env("PRIVACY_URL"),
   termsUrl: env("TERMS_URL"),
+  /**
+   * Saytdagi bir martalik Premium to'lovi (/premium, Payme): ilova serverining to'lov API'si. Bo'sh — sahifa o'z
+   * domenidagi /v1/pay/* ni chaqiradi (serverda Caddy uni ilova serveriga uzatadi). Lokal sinov:
+   * PAY_API=http://127.0.0.1:8787 (serverda SITE_ORIGINS ga sahifa manzili qo'shiladi).
+   */
+  payApi: env("PAY_API") ?? "",
+  /**
+   * WEB_PAYMENTS=1 — saytdagi to'lov jonli kassada ishlayapti: «Narxlar» va «Savollar» da havola, /premium qidiruv
+   * tizimlari va sitemap'da. Sinov kassasi paytida bo'sh: sahifa ochiladi, lekin hech qayerdan havola berilmaydi.
+   */
+  webPayments: env("WEB_PAYMENTS") === "1",
 } as const;
 
 export const storesAvailable = Boolean(site.appStoreUrl || site.googlePlayUrl);

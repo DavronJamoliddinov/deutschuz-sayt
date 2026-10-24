@@ -4,7 +4,8 @@ import { typo } from "@/lib/typography";
 
 /**
  * Narxlar va bepul/Premium chegarasi — loyiha egasi qarorlari (CLAUDE.md, 9-bo'lim: 2026-09-25 va 2026-09-26).
- * Saytda sotib olish tugmasi yo'q: obuna faqat ilova ichida, do'kon to'lovi orqali rasmiylashtiriladi.
+ * Bu yerdagi narxlar — ilova ichidagi do'kon obunasi (USD). Saytda alohida bir martalik to'lov bor (so'mda, Payme):
+ * /premium, matnlari content/premium.ts, narxi ilova serveridan.
  */
 export type Plan = { months: number; label: string; price: number; featured?: boolean };
 
