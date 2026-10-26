@@ -55,7 +55,7 @@ export const featureTiles: FeatureTile[] = typo([
   {
     key: "reading",
     kicker: "Oʻqish",
-    title: `${facts.texts} ta matn: A1–B1`,
+    title: `${facts.texts} ta matn: A1–C1`,
     text: "Notanish soʻzni bosing — tarjimasi pastda chiqadi va oʻqish davom etadi. Matn oxirida tushunish savollari.",
     link: { href: "/imkoniyatlar#oqish-namuna", label: "Namunani sinab koʻring" },
   },

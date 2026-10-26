@@ -124,7 +124,7 @@ export const readingIntro = typo({
   title: "Notanish soʻzni bosing — tarjimasi shu yerning oʻzida.",
   lead: "Ilovadagi matnlarda har bir soʻz lugʻatga ulangan: bosilgan soʻzning tarjimasi pastda chiqadi, matn esa joyida qoladi. Quyidagi namunada sinab koʻring.",
   points: [
-    `A1, A2 va B1 darajalarida ${facts.texts} ta matn (har birida 30 tadan); B2 va C1 matnlari tayyorlanmoqda.`,
+    `A1 dan C1 gacha ${facts.texts} ta matn — har darajada 30 tadan.`,
     "Soʻzni bosing yoki Tab bilan tanlang — tarjima va shakl izohi darhol chiqadi.",
     "Siz bosgan soʻzlar roʻyxati: ilovada ularni bir bosishda kartochkalarga qoʻshasiz.",
     "Gap tarjimasi, tinglash va matn oxirida tushunish savollari.",

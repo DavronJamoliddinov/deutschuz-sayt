@@ -4,7 +4,7 @@ import { readingIntro } from "@/content/reading";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ReadingDemo } from "./ReadingDemo";
 
-/** O'qish matnlari: haqiqiy darajalar (A1–B1, B2/C1 tayyorlanmoqda) va ishlaydigan «so'zni bosing» namunasi. */
+/** O'qish matnlari: haqiqiy darajalar (A1–C1) va ishlaydigan «so'zni bosing» namunasi. */
 export function ReadingSpotlight() {
   return (
     <section id="oqish-namuna" aria-labelledby="reading-title" className="cv-auto relative py-20 sm:py-28 lg:py-32">

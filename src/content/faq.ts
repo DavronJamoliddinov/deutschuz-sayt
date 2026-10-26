@@ -48,7 +48,7 @@ export function getFaq({ storesAvailable, webPayments = false }: { storesAvailab
     },
     {
       question: "Qaysi darajalar mavjud?",
-      answer: `Soʻzlar, oʻyinlar va kartochkalar — A1–B2; grammatika — A1–C1 (${facts.grammarLessons} ta dars); oʻqish matnlari — A1–B1 (B2 va C1 tayyorlanmoqda); video darslar va gapirish mashqlari — A1–B2.`,
+      answer: `Soʻzlar, oʻyinlar va kartochkalar — A1–B2; grammatika — A1–C1 (${facts.grammarLessons} ta dars); oʻqish matnlari — A1–C1 (${facts.texts} ta); video darslar va gapirish mashqlari — A1–B2 (C1 videolari tayyorlanmoqda).`,
     },
     {
       question: "Tarjimalar qanday tayyorlangan?",

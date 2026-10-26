@@ -30,7 +30,7 @@ export const factsBand = typo({
     { value: facts.grammarLessons, label: "grammatika darsi", hint: "A1 dan C1 gacha" },
     { value: facts.speakingTasks, label: "gapirish mashqi", hint: "imtihon va hayotiy vaziyatlar" },
     { value: facts.videos, label: "video dars", hint: "A1–B2 darajalari" },
-    { value: facts.texts, label: "oʻqish matni", hint: "A1–B1, savollar bilan" },
+    { value: facts.texts, label: "oʻqish matni", hint: "A1–C1, savollar bilan" },
   ],
 } as const);
 
