@@ -1,4 +1,5 @@
 import { typo } from "@/lib/typography";
+import { support } from "./support";
 
 /**
  * Saytdagi bir martalik Premium to'lovi (Payme, so'mda) — loyiha egasi qarori (2026-10-23): obuna emas, kartadan
@@ -54,7 +55,7 @@ export const checkoutCopy = typo({
   successUntil: "Premium {date} gacha faol.",
   successReopen: "Ilovani yoping va qayta oching — Premium oʻzi ochiladi.",
   pendingGrant: "Premium bir necha daqiqada faollashadi — keyin ilovani qayta oching.",
-  pendingLong: "15 daqiqada faollashmasa, buyurtma raqami bilan qoʻllab-quvvatlashga yozing.",
+  pendingLong: `15 daqiqada faollashmasa, buyurtma raqami bilan qoʻllab-quvvatlashga yozing: ${support.email} yoki Telegram @${support.telegram}.`,
   testDone: "Sinov toʻlovi muvaffaqiyatli. Sinov rejimida Premium berilmaydi.",
   orderNo: "Buyurtma",
   amount: "Summa",

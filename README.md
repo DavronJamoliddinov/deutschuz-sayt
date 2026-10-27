@@ -108,6 +108,7 @@ Barcha matnlar va raqamlar kodga tegmasdan tahrirlanadi — `src/content/`:
 | `navigation.ts` | Sahifalar: menyu nomlari va tavsiflari, «Yuklab olish» sahifasi sarlavhasi |
 | `download.ts` | Yuklab olish bloki: platformalar, «hali yoʻq» va kompyuter matnlari |
 | `reading.ts` | O'qish namunasi: matn, gap tarjimalari, so'zlar lug'ati |
+| `support.ts` | Qo'llab-quvvatlash: email va Telegram (footer, «Savollar» → `#aloqa` — App Store «Support URL», `/premium/`) |
 | `features.ts`, `demo.ts`, `levels.ts`, `showcase.ts`, `exam.ts`, `pricing.ts`, `faq.ts` | Tegishli bo'limlar |
 
 - O'zbek imlosi: `oʻ`, `gʻ` — U+02BB (`ʻ`), tutuq belgisi — U+02BC (`ʼ`), qo'shtirnoq — `«…»`.

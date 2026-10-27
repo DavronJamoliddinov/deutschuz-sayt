@@ -1,4 +1,5 @@
 import { facts } from "./facts";
+import { support } from "./support";
 import { groupDigits } from "@/lib/format";
 import { typo } from "@/lib/typography";
 
@@ -64,6 +65,10 @@ export function getFaq({ storesAvailable, webPayments = false }: { storesAvailab
       question: "Ilova sertifikat beradimi?",
       answer:
         "Yoʻq. DeutschUz rasmiy imtihon markazi emas va Goethe-Institut yoki telc bilan bogʻliq emas. Ilova imtihon formatida mashq qilishga yordam beradi, sertifikat esa rasmiy imtihonni topshirib olinadi.",
+    },
+    {
+      question: "Savol yoki muammo boʻlsa, qayerga yozaman?",
+      answer: `Email: ${support.email} yoki Telegram: @${support.telegram}. Ilovadagi Foydalanuvchi IDʼni (Profil → Sozlamalar → «Foydalanuvchi ID») qoʻshing, toʻlov boʻyicha murojaatda — buyurtma raqamini ham. Ilovaning oʻzida: Profil → «Yordam va qoʻllab-quvvatlash».`,
     },
     {
       question: "Kirill alifbosida foydalansa boʻladimi?",

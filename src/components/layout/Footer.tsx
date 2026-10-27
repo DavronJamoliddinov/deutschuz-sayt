@@ -3,6 +3,8 @@ import { footer } from "@/content/home";
 import { downloadPage, navLinks } from "@/content/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { CurrentYear } from "@/components/ui/CurrentYear";
+import { SupportContacts } from "@/components/ui/SupportContacts";
+import { supportCopy } from "@/content/support";
 
 const linkClass =
   "rounded underline decoration-paper/30 underline-offset-[3px] transition-colors hover:text-paper hover:decoration-sun";
@@ -19,6 +21,8 @@ export function Footer({ privacyUrl, termsUrl }: { privacyUrl: string | null; te
         <div className="md:col-span-2 lg:col-span-1">
           <Logo />
           <p className="mt-5 max-w-[26rem] text-[15px] leading-[1.7] text-paper/65">{footer.description}</p>
+          <h2 className="mt-8 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-paper/50">{supportCopy.title}</h2>
+          <SupportContacts tone="dark" className="mt-3" />
         </div>
 
         <nav aria-labelledby="footer-nav">

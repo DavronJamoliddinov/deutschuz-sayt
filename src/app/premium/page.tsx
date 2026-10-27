@@ -5,6 +5,8 @@ import { premiumNotes, premiumPage, premiumSteps } from "@/content/premium";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PremiumCheckout } from "@/components/sections/PremiumCheckout";
+import { SupportContacts } from "@/components/ui/SupportContacts";
+import { supportCopy } from "@/content/support";
 
 export const metadata: Metadata = {
   ...pageMetadata({ path: premiumPage.path, title: premiumPage.metaTitle, description: premiumPage.metaDescription }),
@@ -48,6 +50,10 @@ export default function PremiumPage() {
                   </li>
                 ))}
               </ul>
+            </div>
+            <div>
+              <p className="text-[14.5px] leading-relaxed text-ink-2">{supportCopy.paymentHelp}</p>
+              <SupportContacts columns={1} className="mt-3" />
             </div>
           </aside>
         </div>
