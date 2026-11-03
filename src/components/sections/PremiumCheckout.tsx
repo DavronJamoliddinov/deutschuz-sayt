@@ -8,8 +8,8 @@ import { cn } from "@/lib/cn";
 
 /* Ilova serveri /v1/pay/* javoblari (ai_proxy/payments.py). */
 type Plan = { key: string; months: number; label: string; uzs: number; usd: string; per_month_uzs: number; saving: number; popular: boolean };
-type Plans = { enabled: boolean; test: boolean; plans: Plan[]; default: string };
-type OrderState = "sms" | "verifying" | "paying" | "checking" | "paid" | "failed" | "expired";
+type Plans = { enabled: boolean; test: boolean; plans: Plan[]; default: string; payme_flow?: "checkout" | "card" };
+type OrderState = "link" | "sms" | "verifying" | "paying" | "checking" | "paid" | "failed" | "expired";
 type Order = {
   order_id: string;
   state: OrderState;
@@ -22,6 +22,7 @@ type Order = {
   error: string | null;
 };
 type Sms = { order_id: string; card: string | null; phone: string | null; wait: number; label: string; amount: number };
+type PayLink = { order_id: string; url: string };
 
 type View =
   | { step: "loading" }
@@ -80,6 +81,12 @@ function stored(value?: string | null): string | null {
     /* yopiq rejim — saqlanmaydi */
   }
   return null;
+}
+
+/** Payme sahifasidan qaytish: /premium/?order=DZ… (boshqa brauzerda ochilgan bo'lsa ham natija ko'rinadi). */
+function returnedOrder(): string | null {
+  const order = new URLSearchParams(window.location.search).get("order");
+  return order && /^DZ[0-9A-F]{12}$/.test(order) ? order : null;
 }
 
 /** Hodisa va effektlarda ishlatiladi (render paytida emas) — SMS qayta yuborish taymeri uchun. */
@@ -203,16 +210,27 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
       if (!alive) return;
       setPlans(data);
       setPlan(data.default);
-      const orderId = stored();
+      const returned = returnedOrder();
+      if (returned) stored(returned);
+      const orderId = stored() ?? returned;
       if (orderId) {
         try {
           const order = await call<Order>(api, `orders/${orderId}`);
           if (!alive) return;
+          // Manzildan olib tashlanadi: yangi to'lov boshlangach yangilash eski natijani qaytarmasin.
+          if (returned) window.history.replaceState(null, "", window.location.pathname);
+          // Payme sahifasida to'lanmay qaytildi: tranzaksiya ochilmagan, yangidan boshlash mumkin.
+          if (order.state === "link") {
+            stored(null);
+            setView(data.enabled ? { step: "form" } : { step: "unavailable", reason: "disabled" });
+            return;
+          }
           if (order.state === "sms") {
             setView({ step: "sms", sms: { order_id: order.order_id, card: order.card, phone: null, wait: 0, label: order.label, amount: order.amount } });
             return;
           }
-          if (order.state === "paid") {
+          // Sahifadan qaytganda to'lanmagan natija ham sababi bilan ko'rinadi; oddiy yangilashda — yangi forma.
+          if (order.state === "paid" || (returned && FINAL.includes(order.state))) {
             setView({ step: "result", order });
             return;
           }
@@ -231,6 +249,15 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
       alive = false;
     };
   }, [api]);
+
+  // Payme sahifasidan brauzerning "orqaga" tugmasi bilan qaytildi: sahifa keshdan tiklanadi, tugma band qolmasin.
+  useEffect(() => {
+    const onShow = (event: PageTransitionEvent) => {
+      if (event.persisted) setBusy(false);
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
 
   // To'lov jarayonida va Premium berilishini kutishda holat serverdan so'raladi: avval tez-tez, ~3 daqiqadan keyin
   // siyrak (to'lov holati aniqlanmagan bo'lsa) yoki to'xtaydi (Premium hali berilmagan bo'lsa — matn qoladi).
@@ -295,6 +322,8 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
   const selected = plans?.plans.find((p) => p.key === plan) ?? plans?.plans[0];
   const cardDigits = digitsOf(card);
   const idOk = USER_ID.test(userId.trim());
+  // Payme sahifasi (Merchant API) — sukut; karta shakli faqat server shuni aytsa.
+  const cardForm = plans?.payme_flow === "card";
   const cardOk = cardDigits.length === 16;
   const expireOk = expireValid(expire);
 
@@ -304,6 +333,24 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
     setError(null);
     setInfo(null);
     setView(plans?.enabled ? { step: "form" } : { step: "unavailable", reason: "disabled" });
+  };
+
+  const submitPage = async (event: FormEvent) => {
+    event.preventDefault();
+    setTouched(true);
+    setError(null);
+    if (!idOk) return idRef.current?.focus();
+    if (!selected) return;
+    setBusy(true);
+    try {
+      const link = await call<PayLink>(api, "link", { user_id: userId.trim(), plan: selected.key, method: "payme", site: true });
+      stored(link.order_id);
+      // Sahifa almashguncha tugma band qoladi: ikkinchi buyurtma ochilmaydi.
+      window.location.assign(link.url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t.network);
+      setBusy(false);
+    }
   };
 
   const showOrder = (order: Order) => {
@@ -432,7 +479,7 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
       )}
 
       {view.step === "form" && plans && selected && (
-        <form noValidate onSubmit={submitCard} className="grid gap-7">
+        <form noValidate onSubmit={cardForm ? submitCard : submitPage} className="grid gap-7">
           {testBanner}
 
           <fieldset>
@@ -505,54 +552,56 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
             {touched && !idOk && <FieldError id="pay-user-error">{t.idInvalid}</FieldError>}
           </div>
 
-          <fieldset>
-            <legend className="font-display text-[19px] font-semibold tracking-[-0.02em]">{t.stepCard}</legend>
-            <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_8.5rem]">
-              <div>
-                <label htmlFor="pay-card" className="text-[13.5px] font-medium text-ink-2">
-                  {t.cardLabel}
-                </label>
-                <div className="relative mt-1.5">
+          {cardForm && (
+            <fieldset>
+              <legend className="font-display text-[19px] font-semibold tracking-[-0.02em]">{t.stepCard}</legend>
+              <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_8.5rem]">
+                <div>
+                  <label htmlFor="pay-card" className="text-[13.5px] font-medium text-ink-2">
+                    {t.cardLabel}
+                  </label>
+                  <div className="relative mt-1.5">
+                    <input
+                      ref={cardRef}
+                      id="pay-card"
+                      value={card}
+                      onChange={(e) => setCard(formatCard(e.target.value))}
+                      inputMode="numeric"
+                      autoComplete="cc-number"
+                      placeholder={t.cardPlaceholder}
+                      aria-invalid={touched && !cardOk}
+                      aria-describedby={touched && !cardOk ? "pay-card-error" : undefined}
+                      className={cn(inputClass, cardBrand(cardDigits) && "pr-20")}
+                    />
+                    {cardBrand(cardDigits) && (
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md bg-navy-900 px-2 py-0.5 text-[11.5px] font-semibold text-paper">
+                        {cardBrand(cardDigits)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="max-w-[11rem] sm:max-w-none">
+                  <label htmlFor="pay-expire" className="text-[13.5px] font-medium text-ink-2">
+                    {t.expireLabel}
+                  </label>
                   <input
-                    ref={cardRef}
-                    id="pay-card"
-                    value={card}
-                    onChange={(e) => setCard(formatCard(e.target.value))}
+                    ref={expireRef}
+                    id="pay-expire"
+                    value={expire}
+                    onChange={(e) => setExpire(formatExpire(e.target.value, expire))}
                     inputMode="numeric"
-                    autoComplete="cc-number"
-                    placeholder={t.cardPlaceholder}
-                    aria-invalid={touched && !cardOk}
-                    aria-describedby={touched && !cardOk ? "pay-card-error" : undefined}
-                    className={cn(inputClass, cardBrand(cardDigits) && "pr-20")}
+                    autoComplete="cc-exp"
+                    placeholder={t.expirePlaceholder}
+                    aria-invalid={touched && !expireOk}
+                    aria-describedby={touched && !expireOk ? "pay-expire-error" : undefined}
+                    className={cn(inputClass, "mt-1.5")}
                   />
-                  {cardBrand(cardDigits) && (
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md bg-navy-900 px-2 py-0.5 text-[11.5px] font-semibold text-paper">
-                      {cardBrand(cardDigits)}
-                    </span>
-                  )}
                 </div>
               </div>
-              <div className="max-w-[11rem] sm:max-w-none">
-                <label htmlFor="pay-expire" className="text-[13.5px] font-medium text-ink-2">
-                  {t.expireLabel}
-                </label>
-                <input
-                  ref={expireRef}
-                  id="pay-expire"
-                  value={expire}
-                  onChange={(e) => setExpire(formatExpire(e.target.value, expire))}
-                  inputMode="numeric"
-                  autoComplete="cc-exp"
-                  placeholder={t.expirePlaceholder}
-                  aria-invalid={touched && !expireOk}
-                  aria-describedby={touched && !expireOk ? "pay-expire-error" : undefined}
-                  className={cn(inputClass, "mt-1.5")}
-                />
-              </div>
-            </div>
-            {touched && !cardOk && <FieldError id="pay-card-error">{t.cardInvalid}</FieldError>}
-            {touched && cardOk && !expireOk && <FieldError id="pay-expire-error">{t.expireInvalid}</FieldError>}
-          </fieldset>
+              {touched && !cardOk && <FieldError id="pay-card-error">{t.cardInvalid}</FieldError>}
+              {touched && cardOk && !expireOk && <FieldError id="pay-expire-error">{t.expireInvalid}</FieldError>}
+            </fieldset>
+          )}
 
           <div className="grid gap-4">
             {error && <Notice tone="error">{error}</Notice>}
@@ -560,7 +609,7 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
             <p className="flex items-start gap-2 text-[13px] leading-snug text-ink-3">
               <Lock aria-hidden className="mt-0.5 size-3.5 shrink-0" />
               <span>
-                {t.secure}{" "}
+                {cardForm ? t.secure : t.securePage}{" "}
                 {termsUrl ? (
                   <>
                     {t.agree.split("{terms}")[0]}
@@ -665,6 +714,15 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
               {t.processing}
             </h2>
             <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{view.slow ? t.processingLong : t.processingNote}</p>
+            {!cardForm && (
+              <button
+                type="button"
+                onClick={restart}
+                className="mt-5 inline-flex min-h-11 items-center rounded-lg px-1 text-[14px] font-medium text-ink-2 underline decoration-ink/25 underline-offset-2"
+              >
+                {t.retry}
+              </button>
+            )}
           </div>
         </div>
       )}
