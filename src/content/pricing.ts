@@ -5,15 +5,16 @@ import { typo } from "@/lib/typography";
 /**
  * Narxlar va bepul/Premium chegarasi — loyiha egasi qarorlari (CLAUDE.md, 9-bo'lim: 2026-09-25 va 2026-09-26).
  * Bu yerdagi narxlar — ilova ichidagi do'kon obunasi (USD). Saytda alohida bir martalik to'lov bor (so'mda, Payme):
- * /premium, matnlari content/premium.ts, narxi ilova serveridan.
+ * /premium, matnlari content/premium.ts, narxi ilova serveridan. To'lov jonli bo'lganda (site.webPayments) har reja
+ * kartasi /premium/?plan=<key> ga olib boradi — [key] ilova serveridagi reja kaliti (ai_proxy/payments.py, PLANS).
  */
-export type Plan = { months: number; label: string; price: number; featured?: boolean };
+export type Plan = { key: "1m" | "3m" | "6m" | "12m"; months: number; label: string; price: number; featured?: boolean };
 
 export const plans: Plan[] = [
-  { months: 1, label: "1 oy", price: 4.99 },
-  { months: 3, label: "3 oy", price: 11.99 },
-  { months: 6, label: "6 oy", price: 19.99, featured: true },
-  { months: 12, label: "1 yil", price: 29.99 },
+  { key: "1m", months: 1, label: "1 oy", price: 4.99 },
+  { key: "3m", months: 3, label: "3 oy", price: 11.99 },
+  { key: "6m", months: 6, label: "6 oy", price: 19.99, featured: true },
+  { key: "12m", months: 12, label: "1 yil", price: 29.99 },
 ];
 
 const monthly = plans[0]?.price ?? 4.99;
@@ -56,6 +57,8 @@ export const premiumTier = typo({
   ],
   featuredLabel: "Tavsiya etamiz",
   perMonth: "oyiga",
+  /** Reja kartasidagi havola — faqat saytdagi to'lov jonli bo'lganda. */
+  buy: "Soʻmda olish",
 } as const);
 
 export const pricingNotes = typo({

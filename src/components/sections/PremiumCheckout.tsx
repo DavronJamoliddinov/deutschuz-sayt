@@ -83,6 +83,11 @@ function stored(value?: string | null): string | null {
   return null;
 }
 
+/** «Narxlar» sahifasidagi reja kartasidan: /premium/?plan=6m — shu reja tanlangan holda ochiladi. */
+function requestedPlan(): string | null {
+  return new URLSearchParams(window.location.search).get("plan");
+}
+
 /** Payme sahifasidan qaytish: /premium/?order=DZ… (boshqa brauzerda ochilgan bo'lsa ham natija ko'rinadi). */
 function returnedOrder(): string | null {
   const order = new URLSearchParams(window.location.search).get("order");
@@ -209,7 +214,8 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
       }
       if (!alive) return;
       setPlans(data);
-      setPlan(data.default);
+      const wanted = requestedPlan();
+      setPlan(wanted && data.plans.some((p) => p.key === wanted) ? wanted : data.default);
       const returned = returnedOrder();
       if (returned) stored(returned);
       const orderId = stored() ?? returned;
@@ -438,7 +444,8 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
   return (
     <div
       ref={rootRef}
-      className="rounded-[28px] bg-white p-4 shadow-card ring-1 ring-ink/[0.07] min-[400px]:p-5 sm:p-8"
+      id="tolov"
+      className="scroll-mt-28 rounded-[28px] bg-white p-4 shadow-card ring-1 ring-ink/[0.07] min-[400px]:p-5 sm:p-8"
       aria-label={t.formLabel}
       role="region"
     >

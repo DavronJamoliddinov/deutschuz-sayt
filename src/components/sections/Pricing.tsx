@@ -1,12 +1,18 @@
 import type { CSSProperties } from "react";
-import { Check, Info } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Check, Info } from "lucide-react";
+import { site } from "@/config/site";
+import { premiumPage } from "@/content/premium";
 import { freeTier, plans, premiumTier, pricingIntro, pricingNotes, savingsPercent } from "@/content/pricing";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import type { UsdRate } from "@/lib/rate";
 import { approxSum, dmy, groupDigits, usd } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
-/** withHeader={false} — alohida sahifada: sarlavha PageHeader'da (h1), bu yerda faqat kontent, rejalar h2. */
+/**
+ * withHeader={false} — alohida sahifada: sarlavha PageHeader'da (h1), bu yerda faqat kontent, rejalar h2.
+ * Saytdagi to'lov jonli bo'lsa (site.webPayments) reja kartasi /premium ga, shu reja tanlangan holda olib boradi.
+ */
 export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader?: boolean }) {
   const Heading = withHeader ? "h3" : "h2";
   const sumNote = pricingNotes.sum.replace("{rate}", groupDigits(rate.rate)).replace("{date}", dmy(rate.date));
@@ -81,16 +87,15 @@ export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader
             <ul className="mt-10 grid grid-cols-2 gap-3 pt-3 sm:grid-cols-4">
               {plans.map((plan) => {
                 const savings = savingsPercent(plan);
-                return (
-                  <li
-                    key={plan.months}
-                    className={cn(
-                      "relative flex min-h-[150px] flex-col gap-0 rounded-2xl p-4 transition-transform duration-300 ease-out-expo hover:-translate-y-0.5",
-                      plan.featured
-                        ? "bg-paper text-ink shadow-[0_0_0_2px_var(--color-sun),0_18px_40px_-16px_rgb(255_212_71/0.45)]"
-                        : "bg-white/[0.05] ring-1 ring-inset ring-white/[0.12]",
-                    )}
-                  >
+                const card = cn(
+                  "relative flex min-h-[150px] w-full flex-col gap-0 rounded-2xl p-4 transition-transform duration-300 ease-out-expo hover:-translate-y-0.5",
+                  plan.featured
+                    ? "bg-paper text-ink shadow-[0_0_0_2px_var(--color-sun),0_18px_40px_-16px_rgb(255_212_71/0.45)]"
+                    : "bg-white/[0.05] ring-1 ring-inset ring-white/[0.12]",
+                  site.webPayments && !plan.featured && "hover:bg-white/[0.09]",
+                );
+                const body = (
+                  <>
                     {plan.featured && (
                       <span className="absolute -top-3 left-3 whitespace-nowrap rounded-full bg-sun px-2.5 py-0.5 text-[11.5px] font-semibold text-navy-900">
                         {premiumTier.featuredLabel}
@@ -123,6 +128,28 @@ export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader
                     >
                       {premiumTier.perMonth} {usd(plan.price / plan.months)}
                     </span>
+                    {site.webPayments && (
+                      <span
+                        className={cn(
+                          "mt-3 inline-flex items-center gap-1 text-[13px] font-semibold",
+                          plan.featured ? "text-navy-900" : "text-sun",
+                        )}
+                      >
+                        {premiumTier.buy}
+                        <ArrowRight aria-hidden className="size-3.5" />
+                      </span>
+                    )}
+                  </>
+                );
+                return (
+                  <li key={plan.key} className="flex">
+                    {site.webPayments ? (
+                      <Link href={`${premiumPage.path}/?plan=${plan.key}#tolov`} className={card}>
+                        {body}
+                      </Link>
+                    ) : (
+                      <div className={card}>{body}</div>
+                    )}
                   </li>
                 );
               })}
