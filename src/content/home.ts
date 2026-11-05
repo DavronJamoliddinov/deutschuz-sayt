@@ -5,6 +5,7 @@ import { typo } from "@/lib/typography";
 /* ---------- Hero ---------- */
 export const hero = typo({
   statusSoon: "Tez orada App Store va Google Playʼda",
+  statusWeb: "iPhoneʼga hozirdan oʻrnatiladi",
   statusLive: "iPhone va Android uchun",
   /** Sarlavha so'zlari: animatsiya so'zma-so'z, `highlight` — ajratib ko'rsatiladigan so'z. */
   titleWords: ["Nemis", "tilini", "oʻzbekcha", "tushunib", "oʻrganing."],
@@ -96,6 +97,8 @@ export const finalCta = typo({
   title: "Nemis tilini oʻrganish sari ilk qadamingizni DeutschUz bilan qoʻying.",
   textSoon:
     "Ilova tez orada App Store va Google Playʼda chiqadi. Chiqishi bilan yuklab olish havolalari shu yerda paydo boʻladi.",
+  textWeb:
+    "iPhoneʼga hozirdan oʻrnating — brauzer orqali, bir daqiqada. App Store va Google Play tez orada. Lugʻat — doim bepul.",
   textLive: "iPhone va Android uchun bepul yuklab oling. Lugʻat — doim bepul.",
   visualLabel:
     "DeutschUz ilovasining bosh sahifasi: lugʻat qidiruvi, kunlik maqsad va boʻlimlar — oʻyinlar, gapirish, matnlar, videolar, mavzular, AI yordamchi",

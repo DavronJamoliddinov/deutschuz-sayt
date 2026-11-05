@@ -54,6 +54,11 @@ export const site = {
    * tizimlari va sitemap'da. Sinov kassasi paytida bo'sh: sahifa ochiladi, lekin hech qayerdan havola berilmaydi.
    */
   webPayments: env("WEB_PAYMENTS") === "1",
+  /**
+   * Veb-ilova (iPhone uchun o'rnatiladigan PWA, docs/webapp.md), masalan https://app.deutschuz.com. Bo'sh bo'lsa sayt unga
+   * havola bermaydi (ilova hali joylanmagan): yuklab olish bo'limi faqat do'konlar holatini ko'rsatadi.
+   */
+  webAppUrl: env("WEB_APP_URL"),
 } as const;
 
 export const storesAvailable = Boolean(site.appStoreUrl || site.googlePlayUrl);

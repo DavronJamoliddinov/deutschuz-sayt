@@ -12,7 +12,15 @@ export const faqIntro = typo({
 } as const);
 
 /** Javoblar faqat CLAUDE.md da tasdiqlangan ma'lumotga tayanadi. */
-export function getFaq({ storesAvailable, webPayments = false }: { storesAvailable: boolean; webPayments?: boolean }): FaqItem[] {
+export function getFaq({
+  storesAvailable,
+  webPayments = false,
+  webApp = false,
+}: {
+  storesAvailable: boolean;
+  webPayments?: boolean;
+  webApp?: boolean;
+}): FaqItem[] {
   return typo([
     {
       question: "DeutschUz kimlar uchun?",
@@ -27,8 +35,12 @@ export function getFaq({ storesAvailable, webPayments = false }: { storesAvailab
     {
       question: "Ilovani qayerdan yuklab olaman?",
       answer: storesAvailable
-        ? "App Store va Google Playʼdan — havolalar «Yuklab olish» sahifasida, qurilmangiz avtomatik aniqlanadi. Veb-versiya va kompyuter dasturi yoʻq: oʻrganish mobil ilovada boʻladi."
-        : "DeutschUz iPhone va Android uchun App Store hamda Google Play orqali tarqatiladi. Ilova hozir chiqishga tayyorlanmoqda — yuklab olish havolalari «Yuklab olish» sahifasida paydo boʻladi. Veb-versiya va kompyuter dasturi yoʻq.",
+        ? webApp
+          ? "App Store va Google Playʼdan — havolalar «Yuklab olish» sahifasida, qurilmangiz avtomatik aniqlanadi. Brauzer orqali oʻrnatish ham mumkin; alohida kompyuter dasturi yoʻq."
+          : "App Store va Google Playʼdan — havolalar «Yuklab olish» sahifasida, qurilmangiz avtomatik aniqlanadi. Alohida kompyuter dasturi yoʻq: oʻrganish mobil ilovada boʻladi."
+        : webApp
+          ? "iPhoneʼga hozirdan: «Yuklab olish» sahifasidagi «iPhoneʼga oʻrnatish» tugmasi ilovani Safariʼda ochadi, u yerda hisobga kirasiz va koʻrsatma boʻyicha bosh ekranga qoʻshasiz. App Store va Google Play — tez orada. Android va kompyuterda ham brauzer orqali ishlaydi."
+          : "DeutschUz iPhone va Android uchun App Store hamda Google Play orqali tarqatiladi. Ilova hozir chiqishga tayyorlanmoqda — yuklab olish havolalari «Yuklab olish» sahifasida paydo boʻladi. Alohida kompyuter dasturi yoʻq.",
     },
     {
       question: "Nimalar bepul?",
@@ -38,6 +50,9 @@ export function getFaq({ storesAvailable, webPayments = false }: { storesAvailab
       question: "Premium qancha turadi va qanday toʻlanadi?",
       answer:
         "1 oy — $4.99, 3 oy — $11.99, 6 oy — $19.99, 1 yil — $29.99. Obuna ilova ichida App Store yoki Google Play orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq." +
+        (webApp
+          ? " iPhoneʼga brauzer orqali oʻrnatilgan ilovada Premium soʻmda: Payme, Click, Uzum yoki Google Pay bilan, bir martalik toʻlov (avtomatik yechilmaydi)."
+          : "") +
         (webPayments
           ? " Oʻzbekistonda soʻmda ham toʻlash mumkin: saytdagi «Premium» sahifasida Uzcard yoki Humo kartasi bilan, Payme orqali — bir martalik toʻlov, avtomatik yangilanmaydi."
           : ""),

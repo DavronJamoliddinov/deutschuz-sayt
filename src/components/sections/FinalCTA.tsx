@@ -34,10 +34,10 @@ export function FinalCTA() {
             {finalCta.title}
           </h2>
           <p data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties} className="mt-6 max-w-[34rem] text-[17.5px] leading-[1.65] text-paper/70">
-            {storesAvailable ? finalCta.textLive : finalCta.textSoon}
+            {storesAvailable ? finalCta.textLive : site.webAppUrl ? finalCta.textWeb : finalCta.textSoon}
           </p>
           <div data-reveal style={{ "--reveal-delay": "210ms" } as CSSProperties} className="mt-9">
-            <DownloadOptions appStoreUrl={site.appStoreUrl} googlePlayUrl={site.googlePlayUrl} />
+            <DownloadOptions appStoreUrl={site.appStoreUrl} googlePlayUrl={site.googlePlayUrl} webAppUrl={site.webAppUrl} />
           </div>
         </div>
 

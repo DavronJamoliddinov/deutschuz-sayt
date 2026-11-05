@@ -70,7 +70,15 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           Asosiy mazmunga oʻtish
         </a>
         <MotionProvider>
-          <Navbar statusNote={storesAvailable ? "App Store va Google Playʼda" : "Tez orada App Store va Google Playʼda"} />
+          <Navbar
+            statusNote={
+              storesAvailable
+                ? "App Store va Google Playʼda"
+                : site.webAppUrl
+                  ? "iPhoneʼga hozirdan oʻrnatiladi"
+                  : "Tez orada App Store va Google Playʼda"
+            }
+          />
           {children}
           <Footer privacyUrl={site.privacyUrl} termsUrl={site.termsUrl} />
         </MotionProvider>

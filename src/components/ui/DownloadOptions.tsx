@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
-import { ArrowUpRight, Check, Clock, Copy, Monitor, Smartphone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, Clock, Copy, Monitor, Smartphone } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { downloadCopy, type Platform } from "@/content/download";
 import { cn } from "@/lib/cn";
@@ -10,6 +10,12 @@ const ORDER: Platform[] = ["ios", "android", "desktop"];
 const ICONS: Record<Platform, LucideIcon> = { ios: Smartphone, android: Smartphone, desktop: Monitor };
 
 const noopSubscribe = () => () => {};
+
+/** Veb-ilova manzili: `src` — qaysi tugmadan kelgani (ilova serverining identifikatorsiz hisoblagichi, docs/webapp.md). */
+const webLink = (webAppUrl: string, platform: Platform) => `${webAppUrl}/?src=landing_${platform}`;
+
+const PRIMARY_LINK =
+  "group inline-flex min-h-14 items-center gap-3 rounded-2xl bg-sun px-5 py-3 font-semibold text-navy-900 transition-[background-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:bg-[#ffdb63]";
 
 /** Brauzerdagi qurilmani aniqlash (iPadOS o'zini Mac deb ko'rsatadi — sensorli ekran bo'yicha ajratiladi). */
 function detectPlatform(): Platform {
@@ -22,16 +28,19 @@ function detectPlatform(): Platform {
 
 /**
  * Yuklab olish: qurilma avtomatik aniqlanadi va ajratib ko'rsatiladi, boshqasini qo'lda tanlash mumkin.
- * Havola bo'lmasa (ilova hali do'konda yo'q / kompyuter versiyasi yo'q) — soxta tugma emas, aniq izoh.
+ * Havola bo'lmasa (ilova hali do'konda yo'q) — soxta tugma emas, aniq izoh. Veb-ilova (`webAppUrl`) joylangan bo'lsa,
+ * do'kon havolasi yo'q platformada asosiy tugma — brauzer orqali o'rnatish, do'kon ikkinchi darajada «tez orada».
  * Statik HTML'da (JS'siz) hamma platformalar holati ro'yxat bo'lib ko'rinadi.
  */
 export function DownloadOptions({
   appStoreUrl,
   googlePlayUrl,
+  webAppUrl = null,
   className,
 }: {
   appStoreUrl: string | null;
   googlePlayUrl: string | null;
+  webAppUrl?: string | null;
   className?: string;
 }) {
   const detected = useSyncExternalStore(noopSubscribe, detectPlatform, () => null);
@@ -102,7 +111,11 @@ export function DownloadOptions({
       {/* Balandlik zaxirasi: statik HTML'dagi obzor gidratsiyadan keyin tanlangan panelga almashganda pastdagi kontent
           siljimaydi (CLS 0) va platformalar orasida almashtirganda sahifa sakramaydi. lg — kompyuter paneli balandligi. */}
       <div className="mt-3 min-h-[9.625rem] lg:min-h-[16.5rem]" aria-live="polite">
-        {selected === null ? <Overview urls={urls} /> : <PlatformPanel platform={selected} url={urls[selected]} urls={urls} />}
+        {selected === null ? (
+          <Overview urls={urls} webAppUrl={webAppUrl} />
+        ) : (
+          <PlatformPanel platform={selected} url={urls[selected]} urls={urls} webAppUrl={webAppUrl} />
+        )}
       </div>
     </div>
   );
@@ -114,12 +127,31 @@ function StoreLink({ store, url }: { store: string; url: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group inline-flex min-h-14 items-center gap-3 rounded-2xl bg-sun px-5 py-3 font-semibold text-navy-900 transition-[background-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:bg-[#ffdb63]"
+      className={PRIMARY_LINK}
     >
       <span className="text-[16px]">{downloadCopy.available(store)}</span>
       <ArrowUpRight aria-hidden className="size-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       <span className="sr-only">(yangi oynada)</span>
     </a>
+  );
+}
+
+/** Veb-ilova: o'sha oynada ochiladi (iPhone'da Safari'ning o'zida — bosh ekranga qo'shish shu yerdan). */
+function WebAppLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a href={href} className={PRIMARY_LINK}>
+      <span className="text-[16px]">{label}</span>
+      <ArrowRight aria-hidden className="size-5 transition-transform duration-300 group-hover:translate-x-0.5" />
+    </a>
+  );
+}
+
+function StoreSoon({ store }: { store: string }) {
+  return (
+    <p className="flex items-center gap-1.5 text-[13.5px] text-paper/60">
+      <Clock aria-hidden className="size-3.5 text-sun" />
+      {downloadCopy.storeSoon(store)}
+    </p>
   );
 }
 
@@ -135,17 +167,46 @@ function MissingCard({ title, text }: { title: string; text: string }) {
   );
 }
 
-function PlatformPanel({ platform, url, urls }: { platform: Platform; url: string | null; urls: Record<Platform, string | null> }) {
+function PlatformPanel({
+  platform,
+  url,
+  urls,
+  webAppUrl,
+}: {
+  platform: Platform;
+  url: string | null;
+  urls: Record<Platform, string | null>;
+  webAppUrl: string | null;
+}) {
   const info = downloadCopy.platforms[platform];
-  if (platform === "desktop") return <DesktopPanel urls={urls} />;
+  if (platform === "desktop") return <DesktopPanel urls={urls} webAppUrl={webAppUrl} />;
   const store = info.store ?? "";
+  const web = downloadCopy.web[platform];
   return (
     <div className="flex flex-col gap-2">
       {url ? (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <StoreLink store={store} url={url} />
-          <span className="text-[13.5px] text-paper/65">{info.hint}</span>
-        </div>
+        <>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <StoreLink store={store} url={url} />
+            <span className="text-[13.5px] text-paper/65">{info.hint}</span>
+          </div>
+          {webAppUrl && (
+            <a
+              href={webLink(webAppUrl, platform)}
+              className="w-fit text-[13.5px] font-semibold text-sun underline-offset-4 hover:underline"
+            >
+              {web.action}
+            </a>
+          )}
+        </>
+      ) : webAppUrl ? (
+        <>
+          <div>
+            <WebAppLink href={webLink(webAppUrl, platform)} label={web.action} />
+          </div>
+          <p className="max-w-[32rem] text-[13.5px] leading-relaxed text-paper/70">{web.hint}</p>
+          <StoreSoon store={store} />
+        </>
       ) : (
         <MissingCard title={downloadCopy.missingTitle(store)} text={downloadCopy.missingText(store)} />
       )}
@@ -153,7 +214,7 @@ function PlatformPanel({ platform, url, urls }: { platform: Platform; url: strin
   );
 }
 
-function DesktopPanel({ urls }: { urls: Record<Platform, string | null> }) {
+function DesktopPanel({ urls, webAppUrl }: { urls: Record<Platform, string | null>; webAppUrl: string | null }) {
   const pageUrl = useSyncExternalStore(
     noopSubscribe,
     () => `${window.location.origin}/yuklab-olish/`,
@@ -173,8 +234,13 @@ function DesktopPanel({ urls }: { urls: Record<Platform, string | null> }) {
 
   return (
     <div className="rounded-2xl bg-white/[0.04] p-4 ring-1 ring-inset ring-white/10">
-      <div className="text-[15px] font-semibold text-paper">{downloadCopy.desktopTitle}</div>
-      <p className="mt-1.5 text-[14px] leading-relaxed text-paper/70">{downloadCopy.desktopText}</p>
+      <div className="text-[15px] font-semibold text-paper">{webAppUrl ? downloadCopy.web.desktop.title : downloadCopy.desktopTitle}</div>
+      <p className="mt-1.5 text-[14px] leading-relaxed text-paper/70">{webAppUrl ? downloadCopy.web.desktop.text : downloadCopy.desktopText}</p>
+      {webAppUrl && (
+        <div className="mt-3">
+          <WebAppLink href={webLink(webAppUrl, "desktop")} label={downloadCopy.web.desktop.action} />
+        </div>
+      )}
       {pageUrl && (
         <div className="mt-3">
           <p className="text-[13px] text-paper/65">{downloadCopy.desktopPhone}</p>
@@ -225,12 +291,21 @@ function StoreStatusList({ urls, className }: { urls: Record<Platform, string | 
   );
 }
 
-function Overview({ urls }: { urls: Record<Platform, string | null> }) {
+function Overview({ urls, webAppUrl }: { urls: Record<Platform, string | null>; webAppUrl: string | null }) {
   return (
     <div className="rounded-2xl bg-white/[0.04] p-4 ring-1 ring-inset ring-white/10">
       <StoreStatusList urls={urls} />
-      {/* Telefonda kerak emas (u yerda «kompyuter versiyasi yo'q» izohi ortiqcha) — obzor telefon kartasi balandligida qoladi. */}
-      <p className="mt-3 hidden text-[13px] leading-relaxed text-paper/60 sm:block">{downloadCopy.desktopText}</p>
+      {webAppUrl ? (
+        <p className="mt-3 text-[13px] leading-relaxed text-paper/70">
+          {downloadCopy.web.overview}{" "}
+          <a href={webLink(webAppUrl, "ios")} className="font-semibold text-sun underline-offset-4 hover:underline">
+            {downloadCopy.web.ios.action}
+          </a>
+        </p>
+      ) : (
+        /* Telefonda kerak emas (u yerda «kompyuter versiyasi yo'q» izohi ortiqcha) — obzor telefon kartasi balandligida qoladi. */
+        <p className="mt-3 hidden text-[13px] leading-relaxed text-paper/60 sm:block">{downloadCopy.desktopText}</p>
+      )}
     </div>
   );
 }

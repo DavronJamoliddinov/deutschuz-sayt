@@ -1,4 +1,4 @@
-import { storesAvailable } from "@/config/site";
+import { site, storesAvailable } from "@/config/site";
 import { Hero } from "@/components/sections/Hero";
 import { FactsBand } from "@/components/sections/FactsBand";
 import { Approach } from "@/components/sections/Approach";
@@ -15,7 +15,7 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
 export default function HomePage() {
   return (
     <main id="asosiy" tabIndex={-1} className="outline-none">
-      <Hero storesAvailable={storesAvailable} />
+      <Hero storesAvailable={storesAvailable} webApp={Boolean(site.webAppUrl)} />
       <FactsBand />
       <Approach />
       <VocabularyDemo />

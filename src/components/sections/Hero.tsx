@@ -7,7 +7,7 @@ import { HeroVisual } from "./HeroVisual";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
-export function Hero({ storesAvailable }: { storesAvailable: boolean }) {
+export function Hero({ storesAvailable, webApp = false }: { storesAvailable: boolean; webApp?: boolean }) {
   return (
     <section id="top" aria-labelledby="hero-title" className="surface-dark relative isolate overflow-hidden bg-navy-900 text-paper">
       <Backdrop />
@@ -21,7 +21,7 @@ export function Hero({ storesAvailable }: { storesAvailable: boolean }) {
               <span className="ping-soft absolute inset-0 rounded-full bg-sun" />
               <span className="relative size-2 rounded-full bg-sun" />
             </span>
-            {storesAvailable ? hero.statusLive : hero.statusSoon}
+            {storesAvailable ? hero.statusLive : webApp ? hero.statusWeb : hero.statusSoon}
           </p>
 
           <h1
