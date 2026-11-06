@@ -36,7 +36,7 @@ export const checkoutCopy = typo({
   secure: "Toʻlov Payme orqali. Karta raqamini saqlamaymiz — u faqat toʻlov uchun Paymeʼga uzatiladi.",
   securePage: "Payme sahifasi ochiladi: karta raqami va SMS kodni oʻsha yerda kiritasiz, ular bizga kelmaydi.",
   agree: "Toʻlash tugmasini bosib, {terms}ga rozilik bildirasiz.",
-  terms: "Foydalanish shartlari",
+  terms: "ommaviy oferta",
   popular: "Eng mashhur",
   perMonth: "oyiga",
   smsTitle: "SMS kodni kiriting",
@@ -92,6 +92,17 @@ export const premiumNotes = typo({
     "Premium faol boʻlsa, yangi muddat joriy muddat tugaganidan keyin qoʻshiladi — kunlar kuyib ketmaydi.",
     "Narx soʻmda. Dollardagi summa — App Store va Google Playʼdagi narx, maʼlumot uchun.",
     "App Store yoki Google Play obunangiz boʻlsa, avval uni doʻkon sozlamalarida bekor qiling — aks holda ikkalasi bir vaqtda ishlaydi.",
+    "Pulni qaytarish soʻrovi 3 ish kunida koʻrib chiqiladi; pul 10 ish kunigacha toʻlangan kartaga qaytadi, komissiyasiz.",
+  ],
+} as const);
+
+/** Ommaviy ofertaning to'lovga oid bo'limlari (deploy/site/terms.html dagi #s6–#s8) — bank tekshiruvi talabi. */
+export const premiumLegal = typo({
+  title: "Ommaviy oferta",
+  links: [
+    { anchor: "#s6", label: "Toʻlov tartibi" },
+    { anchor: "#s7", label: "Toʻlov xavfsizligi va firibgarlikka qarshi choralar" },
+    { anchor: "#s8", label: "Pulni qaytarish tartibi" },
   ],
 } as const);
 
