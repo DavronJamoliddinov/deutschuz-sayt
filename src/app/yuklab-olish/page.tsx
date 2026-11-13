@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpen, CreditCard, Smartphone } from "lucide-react";
 import { downloadPage } from "@/content/navigation";
-import { site, storesAvailable } from "@/config/site";
+import { site, storeState } from "@/config/site";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DownloadOptions } from "@/components/ui/DownloadOptions";
@@ -10,9 +10,14 @@ import { DownloadOptions } from "@/components/ui/DownloadOptions";
 export const metadata: Metadata = pageMetadata({
   path: "/yuklab-olish",
   title: "Yuklab olish",
-  description: storesAvailable
-    ? "DeutschUz ilovasini yuklab oling: iPhone uchun App Store, Android uchun Google Play. Lugʻat doim bepul."
-    : site.webAppUrl
+  description:
+    storeState === "both"
+      ? "DeutschUz ilovasini yuklab oling: iPhone uchun App Store, Android uchun Google Play. Lugʻat doim bepul."
+      : storeState === "play"
+        ? site.webAppUrl
+          ? "DeutschUz ilovasini Android uchun Google Playʼdan yuklab oling, iPhoneʼga esa brauzer orqali oʻrnating. App Store tez orada. Lugʻat doim bepul."
+          : "DeutschUz ilovasini Android uchun Google Playʼdan yuklab oling. iPhone uchun App Store versiyasi tez orada. Lugʻat doim bepul."
+        : site.webAppUrl
       ? "DeutschUzʼni iPhoneʼga hozirdan oʻrnating: brauzer orqali, bir daqiqada. App Store va Google Play tez orada. Lugʻat doim bepul."
       : "DeutschUz — iPhone va Android uchun mobil ilova. App Store va Google Play sahifalari ilova chiqishi bilan shu yerda paydo boʻladi.",
 });

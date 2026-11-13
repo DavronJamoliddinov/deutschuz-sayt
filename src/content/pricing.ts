@@ -49,7 +49,7 @@ export const premiumTier = typo({
   name: "Premium",
   tagline: "Hamma narsa ochiq",
   items: [
-    "A1–B2: barcha oʻyinlar va kartochkalar",
+    "A1–C1: barcha oʻyinlar va kartochkalar",
     `${facts.grammarLessons} ta grammatika darsi, A1–C1`,
     `Barcha oʻqish matnlari va ${facts.topics} ta mavzu`,
     "«AI tushuntir», gapirish mashqlari va AI yordamchi — kunlik limit bilan",

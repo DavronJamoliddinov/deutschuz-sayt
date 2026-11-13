@@ -38,7 +38,7 @@ export const levels: Level[] = typo([
     name: "Asosiy",
     summary: "Kundalik vaziyatlar: xarid, yoʻl, uy va ish haqida suhbat.",
     items: ["20 ta grammatika darsi", "30 ta oʻqish matni", "30 ta video dars", "Goethe va telc formatida gapirish"],
-    vocabulary: "Goethe A2 roʻyxati asosida",
+    vocabulary: "Goethe A2 roʻyxati va kundalik soʻzlar",
     topics: ["Perfekt", "Dativ", "sifat qoʻshimchalari", "weil, dass, wenn"],
   },
   {
@@ -61,9 +61,8 @@ export const levels: Level[] = typo([
     code: "C1",
     name: "Ilgʻor",
     summary: "Kasbiy va ilmiy matnlar, nozik grammatik uslublar.",
-    items: ["16 ta grammatika darsi", "30 ta oʻqish matni"],
-    pending: ["Video darslar"],
-    vocabulary: "Kengaytirilgan lugʻat",
+    items: ["16 ta grammatika darsi", "30 ta oʻqish matni", "30 ta video dars"],
+    vocabulary: "Chastota va C1 mavzulari boʻyicha tanlangan",
     topics: ["iqtibos: laut, zufolge", "Gerundiv", "matn bogʻlanishi"],
   },
 ]);

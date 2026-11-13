@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import "./globals.css";
-import { site, storesAvailable } from "@/config/site";
+import { site, storeState } from "@/config/site";
+import { storeStatus } from "@/content/home";
 import { pageMetadata } from "@/lib/metadata";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { RevealObserver } from "@/components/motion/RevealObserver";
@@ -71,13 +72,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         </a>
         <MotionProvider>
           <Navbar
-            statusNote={
-              storesAvailable
-                ? "App Store va Google Playʼda"
-                : site.webAppUrl
-                  ? "iPhoneʼga hozirdan oʻrnatiladi"
-                  : "Tez orada App Store va Google Playʼda"
-            }
+            statusNote={storeState === "both" ? "App Store va Google Playʼda" : storeStatus(storeState, Boolean(site.webAppUrl))}
           />
           {children}
           <Footer privacyUrl={site.privacyUrl} termsUrl={site.termsUrl} />

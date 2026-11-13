@@ -63,7 +63,7 @@ export const featureTiles: FeatureTile[] = typo([
     key: "videos",
     kicker: "Videolar",
     title: `${facts.videos} ta video dars`,
-    text: "A1–B2 boʻyicha nemis tilidagi darslar. Subtitrli darslarda karaoke matn, tarjima, sekin rejim va gapma-gap tinglash.",
+    text: "A1–C1 boʻyicha nemis tilidagi darslar, hammasi subtitrli: karaoke matn, tarjima, sekin rejim va gapma-gap tinglash.",
   },
 ]);
 

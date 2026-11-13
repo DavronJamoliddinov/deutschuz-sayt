@@ -27,7 +27,7 @@ export const demoIntro = typo({
     { title: "Test", text: "80% va undan yuqori natija qismni yopadi." },
     { title: "Takrorlash", text: "Soʻzlar FSRS jadvali boʻyicha oʻz vaqtida qaytadi." },
   ],
-  note: `Namunada 6 ta A1 soʻzi. Ilovada A1–B2 boʻyicha ${groupDigits(facts.learningWords)} ta soʻz va ${facts.games} ta oʻyin bor.`,
+  note: `Namunada 6 ta A1 soʻzi. Ilovada A1–C1 boʻyicha ${groupDigits(facts.learningWords)} ta soʻz va ${facts.games} ta oʻyin bor.`,
   tabs: { cards: "Kartochkalar", quiz: "der · die · das" },
 } as const);
 

@@ -1,5 +1,6 @@
 import { facts } from "./facts";
 import { support } from "./support";
+import type { StoreState } from "@/config/site";
 import { groupDigits } from "@/lib/format";
 import { typo } from "@/lib/typography";
 
@@ -13,14 +14,16 @@ export const faqIntro = typo({
 
 /** Javoblar faqat CLAUDE.md da tasdiqlangan ma'lumotga tayanadi. */
 export function getFaq({
-  storesAvailable,
+  stores,
   webPayments = false,
   webApp = false,
 }: {
-  storesAvailable: boolean;
+  stores: StoreState;
   webPayments?: boolean;
   webApp?: boolean;
 }): FaqItem[] {
+  // Obuna qaysi do'kon orqali: chiqmagan do'kon va'da qilinmaydi.
+  const storeNames = stores === "play" ? "Google Play" : stores === "apple" ? "App Store" : "App Store yoki Google Play";
   return typo([
     {
       question: "DeutschUz kimlar uchun?",
@@ -34,13 +37,20 @@ export function getFaq({
     },
     {
       question: "Ilovani qayerdan yuklab olaman?",
-      answer: storesAvailable
-        ? webApp
-          ? "App Store va Google Playʼdan — havolalar «Yuklab olish» sahifasida, qurilmangiz avtomatik aniqlanadi. Brauzer orqali oʻrnatish ham mumkin; alohida kompyuter dasturi yoʻq."
-          : "App Store va Google Playʼdan — havolalar «Yuklab olish» sahifasida, qurilmangiz avtomatik aniqlanadi. Alohida kompyuter dasturi yoʻq: oʻrganish mobil ilovada boʻladi."
-        : webApp
-          ? "iPhoneʼga hozirdan: «Yuklab olish» sahifasidagi «iPhoneʼga oʻrnatish» tugmasi ilovani Safariʼda ochadi, u yerda hisobga kirasiz va koʻrsatma boʻyicha bosh ekranga qoʻshasiz. App Store va Google Play — tez orada. Android va kompyuterda ham brauzer orqali ishlaydi."
-          : "DeutschUz iPhone va Android uchun App Store hamda Google Play orqali tarqatiladi. Ilova hozir chiqishga tayyorlanmoqda — yuklab olish havolalari «Yuklab olish» sahifasida paydo boʻladi. Alohida kompyuter dasturi yoʻq.",
+      answer:
+        stores === "both"
+          ? webApp
+            ? "App Store va Google Playʼdan — havolalar «Yuklab olish» sahifasida, qurilmangiz avtomatik aniqlanadi. Brauzer orqali oʻrnatish ham mumkin; alohida kompyuter dasturi yoʻq."
+            : "App Store va Google Playʼdan — havolalar «Yuklab olish» sahifasida, qurilmangiz avtomatik aniqlanadi. Alohida kompyuter dasturi yoʻq: oʻrganish mobil ilovada boʻladi."
+          : stores === "play"
+            ? webApp
+              ? "Androidʼda — Google Playʼdan: havola «Yuklab olish» sahifasida. iPhoneʼda hozircha brauzer orqali: «iPhoneʼga oʻrnatish» tugmasi ilovani Safariʼda ochadi, hisobga kirib, koʻrsatma boʻyicha bosh ekranga qoʻshasiz. App Store — tez orada. Kompyuterda ham brauzer orqali ishlaydi."
+              : "Androidʼda — Google Playʼdan: havola «Yuklab olish» sahifasida. iPhone uchun App Store versiyasi tayyorlanmoqda — chiqishi bilan havola shu sahifada paydo boʻladi. Alohida kompyuter dasturi yoʻq."
+            : stores === "apple"
+              ? "iPhoneʼda — App Storeʼdan: havola «Yuklab olish» sahifasida. Google Play — tez orada. Alohida kompyuter dasturi yoʻq."
+              : webApp
+                ? "iPhoneʼga hozirdan: «Yuklab olish» sahifasidagi «iPhoneʼga oʻrnatish» tugmasi ilovani Safariʼda ochadi, u yerda hisobga kirasiz va koʻrsatma boʻyicha bosh ekranga qoʻshasiz. App Store va Google Play — tez orada. Android va kompyuterda ham brauzer orqali ishlaydi."
+                : "DeutschUz iPhone va Android uchun App Store hamda Google Play orqali tarqatiladi. Ilova hozir chiqishga tayyorlanmoqda — yuklab olish havolalari «Yuklab olish» sahifasida paydo boʻladi. Alohida kompyuter dasturi yoʻq.",
     },
     {
       question: "Nimalar bepul?",
@@ -49,7 +59,7 @@ export function getFaq({
     {
       question: "Premium qancha turadi va qanday toʻlanadi?",
       answer:
-        "1 oy — $4.99, 3 oy — $11.99, 6 oy — $19.99, 1 yil — $29.99. Obuna ilova ichida App Store yoki Google Play orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq." +
+        `1 oy — $4.99, 3 oy — $11.99, 6 oy — $19.99, 1 yil — $29.99. Obuna ilova ichida ${storeNames} orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq.` +
         (webApp
           ? " iPhoneʼga brauzer orqali oʻrnatilgan ilovada Premium soʻmda: Payme, Click, Uzum yoki Google Pay bilan, bir martalik toʻlov (avtomatik yechilmaydi)."
           : "") +
@@ -60,11 +70,11 @@ export function getFaq({
     {
       question: "Internetsiz ishlaydimi?",
       answer:
-        "Asosiy qismi — ha. Lugʻat, soʻzlar talaffuzi, kartochkalar, oʻyinlar, grammatika va oʻqish matnlari telefonda saqlanadi. AI funksiyalari va videolar uchun internet kerak. Kengaytirilgan lugʻatdagi soʻzlar talaffuzini Premium foydalanuvchilar oflayn paket sifatida yuklab oladi.",
+        "Asosiy qismi — ha. Lugʻat, A1–B2 soʻzlari talaffuzi, kartochkalar, oʻyinlar, grammatika va oʻqish matnlari telefonda saqlanadi. AI funksiyalari va videolar uchun internet kerak. C1 va kengaytirilgan lugʻatdagi soʻzlar talaffuzini Premium foydalanuvchilar oflayn paket sifatida yuklab oladi.",
     },
     {
       question: "Qaysi darajalar mavjud?",
-      answer: `Soʻzlar, oʻyinlar va kartochkalar — A1–B2; grammatika — A1–C1 (${facts.grammarLessons} ta dars); oʻqish matnlari — A1–C1 (${facts.texts} ta); video darslar va gapirish mashqlari — A1–B2 (C1 videolari tayyorlanmoqda).`,
+      answer: `Soʻzlar, oʻyinlar va kartochkalar — A1–C1 (${groupDigits(facts.learningWords)} ta oʻquv soʻzi); grammatika — A1–C1 (${facts.grammarLessons} ta dars); oʻqish matnlari — A1–C1 (${facts.texts} ta); video darslar — A1–C1 (${facts.videos} ta); gapirish mashqlari — A1–B2.`,
     },
     {
       question: "Tarjimalar qanday tayyorlangan?",
