@@ -8,7 +8,20 @@ import { cn } from "@/lib/cn";
 
 /* Ilova serveri /v1/pay/* javoblari (ai_proxy/payments.py). */
 type Plan = { key: string; months: number; label: string; uzs: number; usd: string; per_month_uzs: number; saving: number; popular: boolean };
-type Plans = { enabled: boolean; test: boolean; plans: Plan[]; default: string; payme_flow?: "checkout" | "card" };
+type Plans = {
+  enabled: boolean;
+  test: boolean;
+  plans: Plan[];
+  default: string;
+  payme_flow?: "checkout" | "card";
+  methods?: Record<string, boolean>;
+};
+/* Saytdagi usullar: Rahmat (bitta sahifada kartalar, Payme, Click, Uzum va boshqalar) va Payme. Tartib — ko'rsatish
+ * tartibi. Qaysilari ochiq — server aytadi; `enabled` — Payme (eski server `methods` bermaydi). */
+type SiteMethod = "rahmat" | "payme";
+const SITE_METHODS: SiteMethod[] = ["rahmat", "payme"];
+const siteMethods = (data: Plans): SiteMethod[] =>
+  SITE_METHODS.filter((m) => (m === "payme" ? data.enabled : data.methods?.[m] === true));
 type OrderState = "link" | "sms" | "verifying" | "paying" | "checking" | "paid" | "failed" | "expired";
 type Order = {
   order_id: string;
@@ -185,6 +198,7 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
   const [plans, setPlans] = useState<Plans | null>(null);
   const [view, setView] = useState<View>({ step: "loading" });
   const [plan, setPlan] = useState("6m");
+  const [method, setMethod] = useState<SiteMethod>("payme");
   const [userId, setUserId] = useState("");
   const [card, setCard] = useState("");
   const [expire, setExpire] = useState("");
@@ -214,6 +228,8 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
       }
       if (!alive) return;
       setPlans(data);
+      const open = siteMethods(data).length > 0;
+      setMethod(siteMethods(data)[0] ?? "payme");
       const wanted = requestedPlan();
       setPlan(wanted && data.plans.some((p) => p.key === wanted) ? wanted : data.default);
       const returned = returnedOrder();
@@ -225,10 +241,10 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
           if (!alive) return;
           // Manzildan olib tashlanadi: yangi to'lov boshlangach yangilash eski natijani qaytarmasin.
           if (returned) window.history.replaceState(null, "", window.location.pathname);
-          // Payme sahifasida to'lanmay qaytildi: tranzaksiya ochilmagan, yangidan boshlash mumkin.
+          // To'lov sahifasida to'lanmay qaytildi: tranzaksiya ochilmagan, yangidan boshlash mumkin.
           if (order.state === "link") {
             stored(null);
-            setView(data.enabled ? { step: "form" } : { step: "unavailable", reason: "disabled" });
+            setView(open ? { step: "form" } : { step: "unavailable", reason: "disabled" });
             return;
           }
           if (order.state === "sms") {
@@ -249,7 +265,7 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
         }
         stored(null);
       }
-      setView(data.enabled ? { step: "form" } : { step: "unavailable", reason: "disabled" });
+      setView(open ? { step: "form" } : { step: "unavailable", reason: "disabled" });
     })();
     return () => {
       alive = false;
@@ -328,8 +344,9 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
   const selected = plans?.plans.find((p) => p.key === plan) ?? plans?.plans[0];
   const cardDigits = digitsOf(card);
   const idOk = USER_ID.test(userId.trim());
+  const methods = plans ? siteMethods(plans) : [];
   // Payme sahifasi (Merchant API) — sukut; karta shakli faqat server shuni aytsa.
-  const cardForm = plans?.payme_flow === "card";
+  const cardForm = method === "payme" && plans?.payme_flow === "card";
   const cardOk = cardDigits.length === 16;
   const expireOk = expireValid(expire);
 
@@ -338,7 +355,7 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
     setCode("");
     setError(null);
     setInfo(null);
-    setView(plans?.enabled ? { step: "form" } : { step: "unavailable", reason: "disabled" });
+    setView(methods.length > 0 ? { step: "form" } : { step: "unavailable", reason: "disabled" });
   };
 
   const submitPage = async (event: FormEvent) => {
@@ -349,7 +366,7 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
     if (!selected) return;
     setBusy(true);
     try {
-      const link = await call<PayLink>(api, "link", { user_id: userId.trim(), plan: selected.key, method: "payme", site: true });
+      const link = await call<PayLink>(api, "link", { user_id: userId.trim(), plan: selected.key, method, site: true });
       stored(link.order_id);
       // Sahifa almashguncha tugma band qoladi: ikkinchi buyurtma ochilmaydi.
       window.location.assign(link.url);
@@ -437,7 +454,8 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
     }
   };
 
-  const testBanner = plans?.test && view.step !== "loading" && view.step !== "unavailable" && (
+  // Sinov kassasi belgisi — Payme'niki (Rahmat sinov stendi faqat ichki sinov uchun).
+  const testBanner = plans?.test && method === "payme" && view.step !== "loading" && view.step !== "unavailable" && (
     <Notice tone="warn">{t.testBanner}</Notice>
   );
 
@@ -535,6 +553,35 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
             </div>
           </fieldset>
 
+          {methods.length > 1 && (
+            <fieldset>
+              <legend className="font-display text-[19px] font-semibold tracking-[-0.02em]">{t.stepMethod}</legend>
+              <div className="mt-3 grid gap-3">
+                {methods.map((m) => (
+                  <label
+                    key={m}
+                    className={cn(
+                      "flex cursor-pointer flex-col rounded-2xl p-3.5 ring-1 ring-inset transition-[box-shadow,background-color] duration-200 sm:p-4",
+                      "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-app",
+                      m === method ? "bg-sun-soft/60 ring-2 ring-navy-900" : "bg-paper ring-ink/10 hover:ring-ink/25",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="method"
+                      value={m}
+                      checked={m === method}
+                      onChange={() => setMethod(m)}
+                      className="sr-only"
+                    />
+                    <span className="text-[15px] font-semibold text-ink">{t.methods[m].name}</span>
+                    <span className="mt-1 text-[13.5px] leading-snug text-ink-3">{t.methods[m].hint}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          )}
+
           <div>
             <label htmlFor="pay-user" className="font-display text-[19px] font-semibold tracking-[-0.02em]">
               {t.stepId}
@@ -616,7 +663,7 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
             <p className="flex items-start gap-2 text-[13px] leading-snug text-ink-3">
               <Lock aria-hidden className="mt-0.5 size-3.5 shrink-0" />
               <span>
-                {cardForm ? t.secure : t.securePage}{" "}
+                {cardForm ? t.secure : method === "rahmat" ? t.secureRahmat : t.securePage}{" "}
                 {termsUrl ? (
                   <>
                     {t.agree.split("{terms}")[0]}
