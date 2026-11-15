@@ -38,7 +38,7 @@ export const checkoutCopy = typo({
   secureRahmat:
     "Rahmat sahifasi ochiladi: karta yoki Payme, Click, Uzum ilovasi bilan oʻsha yerda toʻlaysiz — karta maʼlumotlari bizga kelmaydi.",
   stepMethod: "Toʻlov usuli",
-  // ai_proxy/payments.py dagi usul kalitlari; Rahmat — AO «Multicard Payment» to'lov sahifasi.
+  // backend/ai_proxy/payments.py dagi usul kalitlari; Rahmat — AO «Multicard Payment» to'lov sahifasi.
   methods: {
     rahmat: { name: "Rahmat", hint: "Karta, Payme, Click, Uzum va boshqalar — bitta sahifada" },
     payme: { name: "Payme", hint: "Uzcard yoki Humo karta, Payme sahifasida" },

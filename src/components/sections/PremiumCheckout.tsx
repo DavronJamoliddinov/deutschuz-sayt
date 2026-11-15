@@ -6,7 +6,7 @@ import { checkoutCopy as t } from "@/content/premium";
 import { groupDigits } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
-/* Ilova serveri /v1/pay/* javoblari (ai_proxy/payments.py). */
+/* Ilova serveri /v1/pay/* javoblari (backend/ai_proxy/payments.py). */
 type Plan = { key: string; months: number; label: string; uzs: number; usd: string; per_month_uzs: number; saving: number; popular: boolean };
 type Plans = {
   enabled: boolean;

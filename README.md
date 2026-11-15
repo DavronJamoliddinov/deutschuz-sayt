@@ -63,7 +63,7 @@ tayyorlanmoqda). Saytdagi o'qish namunasi — shu ishlashni ko'rsatuvchi bitta q
 Loyiha egasi qarori: Premium saytda ham sotiladi — **bir martalik to'lov** (obuna emas, kartadan avtomatik pul
 yechilmaydi), 1/3/6 oy yoki 1 yil, narx **so'mda** (yonida do'kondagi dollar narxi), Uzcard/Humo, Payme orqali. Ilovada
 bu sahifaga havola yo'q (do'kon qoidalari). Sahifa brauzerda ilova serverining `/v1/pay/*` API'sini chaqiradi
-(`ai_proxy/payments.py`, qo'llanma ilova loyihasidagi `docs/payments.md`, 9-bo'lim): narxlar va rejalar serverdan keladi,
+(`backend/ai_proxy/payments.py`, qo'llanma ilova loyihasidagi `docs/payments.md`, 9-bo'lim): narxlar va rejalar serverdan keladi,
 karta faqat to'lov so'rovida uzatiladi (serverda saqlanmaydi), SMS kod, natija. Serverda sayt va API bitta domenda
 (Caddy `deutschuz.com/v1/pay/*` ni ilova serveriga uzatadi) — CORS kerak emas.
 

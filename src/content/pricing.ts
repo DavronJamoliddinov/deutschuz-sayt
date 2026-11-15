@@ -6,7 +6,7 @@ import { typo } from "@/lib/typography";
  * Narxlar va bepul/Premium chegarasi — loyiha egasi qarorlari (CLAUDE.md, 9-bo'lim: 2026-09-25 va 2026-09-26).
  * Bu yerdagi narxlar — ilova ichidagi do'kon obunasi (USD). Saytda alohida bir martalik to'lov bor (so'mda, Payme):
  * /premium, matnlari content/premium.ts, narxi ilova serveridan. To'lov jonli bo'lganda (site.webPayments) har reja
- * kartasi /premium/?plan=<key> ga olib boradi — [key] ilova serveridagi reja kaliti (ai_proxy/payments.py, PLANS).
+ * kartasi /premium/?plan=<key> ga olib boradi — [key] ilova serveridagi reja kaliti (backend/ai_proxy/payments.py, PLANS).
  */
 export type Plan = { key: "1m" | "3m" | "6m" | "12m"; months: number; label: string; price: number; featured?: boolean };
 
