@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { pricingIntro } from "@/content/pricing";
+import { groupDigits } from "@/lib/format";
+import { storeNames } from "@/content/home";
+import { plans, pricingIntro } from "@/content/pricing";
 import { premiumCta, premiumPage } from "@/content/premium";
-import { site } from "@/config/site";
-import { getUsdRate } from "@/lib/rate";
+import { site, storeState } from "@/config/site";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pricing } from "@/components/sections/Pricing";
@@ -12,16 +13,14 @@ import { ButtonLink } from "@/components/ui/Button";
 export const metadata: Metadata = pageMetadata({
   path: "/narxlar",
   title: "Narxlar",
-  description:
-    "DeutschUz narxlari: lugʻat doim bepul, Premium — 1, 3, 6 oylik va yillik obuna. Obuna ilova ichida, App Store yoki Google Play orqali rasmiylashtiriladi.",
+  description: `DeutschUz narxlari: lugʻat doim bepul, Premium — 1, 3, 6 oylik va yillik obuna, ${groupDigits(plans[0]?.uzs ?? 0)} soʻmdan. Obuna ilova ichida ${storeNames(storeState)} orqali rasmiylashtiriladi.`,
 });
 
-export default async function PricingPage() {
-  const rate = await getUsdRate();
+export default function PricingPage() {
   return (
     <main id="asosiy" tabIndex={-1} className="outline-none">
       <PageHeader id="page-title" crumb="Narxlar" eyebrow={pricingIntro.eyebrow} title={pricingIntro.title} lead={pricingIntro.lead} />
-      <Pricing rate={rate} withHeader={false} />
+      <Pricing withHeader={false} />
       {site.webPayments && (
         <section aria-labelledby="web-pay-title" className="pb-16 sm:pb-20">
           <div className="container-page">

@@ -1,4 +1,6 @@
 import { facts } from "./facts";
+import { storeNames as storeNamesOf } from "./home";
+import { plans } from "./pricing";
 import { support } from "./support";
 import type { StoreState } from "@/config/site";
 import { groupDigits } from "@/lib/format";
@@ -23,7 +25,9 @@ export function getFaq({
   webApp?: boolean;
 }): FaqItem[] {
   // Obuna qaysi do'kon orqali: chiqmagan do'kon va'da qilinmaydi.
-  const storeNames = stores === "play" ? "Google Play" : stores === "apple" ? "App Store" : "App Store yoki Google Play";
+  const storeNames = storeNamesOf(stores);
+  // Narxlar — «Narxlar» sahifasidagi bilan bitta manba (content/pricing.ts), so'mda.
+  const prices = plans.map((plan) => `${plan.label} — ${groupDigits(plan.uzs)} soʻm`).join(", ");
   return typo([
     {
       question: "DeutschUz kimlar uchun?",
@@ -59,12 +63,12 @@ export function getFaq({
     {
       question: "Premium qancha turadi va qanday toʻlanadi?",
       answer:
-        `1 oy — $4.99, 3 oy — $11.99, 6 oy — $19.99, 1 yil — $29.99. Obuna ilova ichida ${storeNames} orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq.` +
+        `${prices}. Obuna ilova ichida ${storeNames} orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq.` +
         (webApp
           ? " iPhoneʼga brauzer orqali oʻrnatilgan ilovada Premium soʻmda: Payme, Click, Uzum yoki Google Pay bilan, bir martalik toʻlov (avtomatik yechilmaydi)."
           : "") +
         (webPayments
-          ? " Oʻzbekistonda soʻmda ham toʻlash mumkin: saytdagi «Premium» sahifasida Uzcard yoki Humo kartasi bilan, Payme orqali — bir martalik toʻlov, avtomatik yangilanmaydi."
+          ? " Saytdagi «Premium» sahifasida xuddi shu narxda Payme orqali ham toʻlash mumkin — bir martalik toʻlov, avtomatik yangilanmaydi."
           : ""),
     },
     {

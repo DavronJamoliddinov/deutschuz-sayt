@@ -542,7 +542,6 @@ export function PremiumCheckout({ api, termsUrl }: { api: string; termsUrl: stri
                     <span className="whitespace-nowrap">{groupDigits(p.uzs)}</span>
                     <span className="text-[13px] font-medium tracking-normal text-ink-3">soʻm</span>
                   </span>
-                  <span className="mt-1 text-[13px] tabular-nums text-ink-3">≈ ${p.usd}</span>
                   <span className="mt-auto pt-2.5">
                     <span className="block border-t border-ink/10 pt-2.5 text-[12.5px] tabular-nums text-ink-2">
                       {t.perMonth} {som(p.per_month_uzs)}

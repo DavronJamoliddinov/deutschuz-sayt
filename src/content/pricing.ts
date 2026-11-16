@@ -1,39 +1,48 @@
 import { facts } from "./facts";
+import { storeNames } from "./home";
+import type { StoreState } from "@/config/site";
 import { groupDigits } from "@/lib/format";
 import { typo } from "@/lib/typography";
 
 /**
  * Narxlar va bepul/Premium chegarasi — loyiha egasi qarorlari (CLAUDE.md, 9-bo'lim: 2026-09-25 va 2026-09-26).
- * Bu yerdagi narxlar — ilova ichidagi do'kon obunasi (USD). Saytda alohida bir martalik to'lov bor (so'mda, Payme):
- * /premium, matnlari content/premium.ts, narxi ilova serveridan. To'lov jonli bo'lganda (site.webPayments) har reja
- * kartasi /premium/?plan=<key> ga olib boradi — [key] ilova serveridagi reja kaliti (backend/ai_proxy/payments.py, PLANS).
+ * Narxlar so'mda: Google Play'dagi obunalar O'zbekistonda so'mda qo'yilgan (docs/store/play/obunalar.txt, 2026-11-10) va
+ * saytdagi bir martalik to'lov (Payme, /premium, ilova serveridagi WEB_PRICES_UZS) — xuddi shu summalar. Narx o'zgarsa —
+ * uchala joyda birga. To'lov jonli bo'lganda (site.webPayments) har reja kartasi /premium/?plan=<key> ga olib boradi —
+ * [key] ilova serveridagi reja kaliti (backend/ai_proxy/payments.py, PLANS).
  */
-export type Plan = { key: "1m" | "3m" | "6m" | "12m"; months: number; label: string; price: number; featured?: boolean };
+export type Plan = { key: "1m" | "3m" | "6m" | "12m"; months: number; label: string; uzs: number; featured?: boolean };
 
 export const plans: Plan[] = [
-  { key: "1m", months: 1, label: "1 oy", price: 4.99 },
-  { key: "3m", months: 3, label: "3 oy", price: 11.99 },
-  { key: "6m", months: 6, label: "6 oy", price: 19.99, featured: true },
-  { key: "12m", months: 12, label: "1 yil", price: 29.99 },
+  { key: "1m", months: 1, label: "1 oy", uzs: 59_000 },
+  { key: "3m", months: 3, label: "3 oy", uzs: 142_000 },
+  { key: "6m", months: 6, label: "6 oy", uzs: 236_000, featured: true },
+  { key: "12m", months: 12, label: "1 yil", uzs: 355_000 },
 ];
 
-const monthly = plans[0]?.price ?? 4.99;
+const monthly = plans[0]?.uzs ?? 59_000;
 
 /** Oylik rejaga nisbatan tejash, pastga yaxlitlangan — ilovadagi hisob bilan bir xil (3 oy → 19%). */
 export function savingsPercent(plan: Plan): number {
-  return Math.floor((1 - plan.price / (plan.months * monthly)) * 100);
+  return Math.floor((1 - plan.uzs / (plan.months * monthly)) * 100);
+}
+
+/** Oyiga to'g'ri keladigan summa, yuzgacha yaxlitlangan: 142 000 / 3 → «47 300». */
+export function perMonthUzs(plan: Plan): string {
+  return groupDigits(Math.round(plan.uzs / plan.months / 100) * 100);
 }
 
 export const pricingIntro = typo({
   eyebrow: "Narxlar",
   /* «Toʻliq kurs» orasida bo'linmas bo'shliq — sarlavha «… bepul.» / «Toʻliq kurs — Premium.» bo'lib bo'linadi. */
-  title: "Lugʻat — bepul. Toʻliq kurs — Premium.",
+  title: "Lugʻat — bepul. Toʻliq kurs — Premium.",
   lead: "Lugʻatdan istalgancha bepul foydalaning. Premium barcha darajalar, grammatika, oʻqish matnlari va AI mashqlarini ochadi.",
 } as const);
 
 export const freeTier = typo({
   name: "Bepul",
-  price: "$0",
+  price: "0",
+  currency: "soʻm",
   period: "doim",
   items: [
     `Toʻliq lugʻat: ${groupDigits(facts.dictionaryWords)}+ soʻz, qidiruv va talaffuz`,
@@ -56,15 +65,20 @@ export const premiumTier = typo({
     "Kengaytirilgan lugʻat uchun oflayn talaffuz paketi",
   ],
   featuredLabel: "Tavsiya etamiz",
-  perMonth: "oyiga",
+  currency: "soʻm",
+  perMonth: "oyiga ≈",
   /** Reja kartasidagi havola — faqat saytdagi to'lov jonli bo'lganda. */
-  buy: "Soʻmda olish",
+  buy: "Saytda olish",
 } as const);
 
-export const pricingNotes = typo({
-  base: "Narxlar — App Store va Google Playʼdagi asosiy narxlar, AQSh dollarida. Boshqa mamlakatlarda doʻkon narxni mahalliy valyutada koʻrsatadi.",
-  /** {rate} va {date} build paytida qo'yiladi. */
-  sum: "Soʻmdagi summa Markaziy bank kursi boʻyicha taxminiy: 1 USD = {rate} soʻm ({date}). Aniq summani bankingiz belgilaydi.",
-  billing:
-    "Obuna ilova ichida rasmiylashtiriladi va avtomatik yangilanadi; uni istalgan vaqtda App Store yoki Google Play sozlamalarida bekor qilasiz. Bepul sinov muddati yoʻq.",
-} as const);
+/** Narxlar ostidagi izohlar — qaysi do'konda chiqqaniga va saytdagi to'lov ochiqligiga qarab. */
+export function pricingNotes(stores: StoreState, webPayments: boolean): string[] {
+  const store = storeNames(stores);
+  return typo([
+    `Narxlar soʻmda — ilova ichidagi ${store} obunasi narxi.`,
+    `Obuna avtomatik yangilanadi; uni istalgan vaqtda ${store} sozlamalarida bekor qilasiz. Bepul sinov muddati yoʻq.`,
+    ...(webPayments
+      ? ["Saytda — xuddi shu narxda bir martalik toʻlov (Payme): muddat tugagach kartadan avtomatik pul yechilmaydi."]
+      : []),
+  ]);
+}

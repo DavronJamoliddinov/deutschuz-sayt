@@ -3,7 +3,7 @@ import { support } from "./support";
 
 /**
  * Saytdagi bir martalik Premium to'lovi (Payme, so'mda) — loyiha egasi qarori (2026-10-23): obuna emas, kartadan
- * avtomatik pul yechilmaydi; muddat tugagach xohlasa yana sotib oladi. Narx so'mda, yonida do'kondagi dollar narxi.
+ * avtomatik pul yechilmaydi; muddat tugagach xohlasa yana sotib oladi. Narx so'mda — Google Play obunasi bilan bir xil.
  * Narxlar va rejalar ilova serveridan keladi (WEB_PRICES_UZS) — sahifada raqam yozilmaydi.
  * Ilovada bu sahifaga havola yo'q (do'kon qoidalari) — foydalanuvchi saytga o'zi kiradi.
  */
@@ -77,7 +77,7 @@ export const checkoutCopy = typo({
   again: "Yana sotib olish",
   testBanner: "Sinov rejimi: haqiqiy pul yechilmaydi, faqat Payme test kartasi ishlaydi.",
   disabledTitle: "Saytda toʻlov hozircha yopiq",
-  disabled: "Premiumʼni ilova ichida — App Store yoki Google Play orqali — sotib olishingiz mumkin.",
+  disabled: "Premiumʼni ilova ichida — doʻkon obunasi orqali — sotib olishingiz mumkin.",
   loadTitle: "Narxlar yuklanmadi",
   loadError: "Internetni tekshirib, sahifani yangilang.",
   reload: "Sahifani yangilash",
@@ -98,8 +98,8 @@ export const premiumNotes = typo({
   items: [
     "Toʻlov bir martalik: muddat tugagach kartadan avtomatik pul yechilmaydi. Xohlasangiz, yana sotib olasiz.",
     "Premium faol boʻlsa, yangi muddat joriy muddat tugaganidan keyin qoʻshiladi — kunlar kuyib ketmaydi.",
-    "Narx soʻmda. Dollardagi summa — App Store va Google Playʼdagi narx, maʼlumot uchun.",
-    "App Store yoki Google Play obunangiz boʻlsa, avval uni doʻkon sozlamalarida bekor qiling — aks holda ikkalasi bir vaqtda ishlaydi.",
+    "Narx soʻmda va ilova ichidagi obuna narxi bilan bir xil — farqi, bu bir martalik toʻlov.",
+    "Ilovada doʻkon orqali obuna boʻlgan boʻlsangiz, avval uni doʻkon sozlamalarida bekor qiling — aks holda ikkalasi bir vaqtda ishlaydi.",
     "Pulni qaytarish soʻrovi 3 ish kunida koʻrib chiqiladi; pul 10 ish kunigacha toʻlangan kartaga qaytadi, komissiyasiz.",
   ],
 } as const);
@@ -116,7 +116,7 @@ export const premiumLegal = typo({
 
 /** «Narxlar» sahifasidagi havola — faqat to'lov jonli bo'lganda (site.webPayments). */
 export const premiumCta = typo({
-  title: "Soʻmda, Uzcard yoki Humo bilan",
+  title: "Saytda — bir martalik toʻlov",
   text: "Premiumʼni saytda Payme orqali sotib olishingiz ham mumkin — bir martalik toʻlov, avtomatik yangilanmaydi.",
   button: "Saytda sotib olish",
 } as const);

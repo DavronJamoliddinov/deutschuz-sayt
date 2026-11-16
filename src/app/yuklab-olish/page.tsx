@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpen, CreditCard, Smartphone } from "lucide-react";
 import { downloadPage } from "@/content/navigation";
+import { storeNames } from "@/content/home";
 import { site, storeState } from "@/config/site";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -35,7 +36,7 @@ const facts = [
     title: "Premium — ilova ichida",
     text: site.webAppUrl
       ? "Premium ilova ichida rasmiylashtiriladi: soʻmda, bir martalik toʻlov (Payme, Click, Uzum, Google Pay) — kartadan avtomatik yechilmaydi."
-      : "Obuna ilova ichida App Store yoki Google Play orqali rasmiylashtiriladi.",
+      : `Obuna ilova ichida ${storeNames(storeState)} orqali rasmiylashtiriladi, narxi soʻmda.`,
     link: { href: "/narxlar", label: "Narxlar" },
   },
   {
