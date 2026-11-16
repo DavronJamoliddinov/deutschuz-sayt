@@ -78,7 +78,8 @@ export function Navbar({ statusNote }: { statusNote: string }) {
                     href={link.href}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "relative block rounded-full px-3.5 py-2 text-[14.5px] font-medium transition-colors duration-200",
+                      // 6 ta bo'lim + tugma 1024 px da ham bir qatorga sig'adi: lg da ixchamroq, xl dan kengroq.
+                      "relative block whitespace-nowrap rounded-full px-2.5 py-2 text-[14px] font-medium transition-colors duration-200 xl:px-3.5 xl:text-[14.5px]",
                       isActive ? "text-paper" : "text-paper/70 hover:text-paper",
                     )}
                   >

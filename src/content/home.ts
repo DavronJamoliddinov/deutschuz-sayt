@@ -90,7 +90,7 @@ export const howItWorks = typo({
 export const explore = typo({
   eyebrow: "Batafsil",
   title: "Har bir boʻlim — alohida sahifada.",
-  lead: "Imkoniyatlar, darajalar, narxlar va savollar bilan batafsil tanishing.",
+  lead: "Imkoniyatlar, darajalar, narxlar, yangiliklar va savollar bilan batafsil tanishing.",
   open: "Ochish",
 } as const);
 
@@ -121,6 +121,11 @@ export const footer = typo({
 } as const);
 
 /* ---------- Do'konlar holati ---------- */
+/** Obuna rasmiylashtiriladigan do'kon(lar) — faqat chiqqani aytiladi (hozir Google Play; App Store chiqqach o'zi qo'shiladi). */
+export function storeNames(stores: StoreState): string {
+  return stores === "play" ? "Google Play" : stores === "apple" ? "App Store" : "App Store yoki Google Play";
+}
+
 /** Hero va navigatsiyadagi qisqa holat: qaysi do'konda chiqqanini aniq aytadi (App Store yo'q paytda uni va'da qilmaydi). */
 export function storeStatus(stores: StoreState, webApp: boolean): string {
   switch (stores) {

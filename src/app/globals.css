@@ -184,6 +184,52 @@
   transform: none !important;
 }
 
+/* ---------- Yangiliklar: katakchalar diagrammasi (UnitGrid, NewsCover) ---------- */
+/* Katakchalar ko'rinishga kirganda ketma-ket paydo bo'ladi; --o — katakning oxirgi shaffofligi (yo'l bo'laklari). */
+.unit-cell {
+  opacity: var(--o, 1);
+}
+.js [data-reveal] .unit-cell {
+  opacity: 0;
+  transform: scale(0.45);
+  transition:
+    opacity 0.5s var(--ease-out-expo),
+    transform 0.8s var(--ease-out-expo);
+  transition-delay: calc(var(--reveal-delay, 0ms) + 120ms + var(--i, 0) * 14ms);
+}
+.js [data-reveal][data-inview] .unit-cell {
+  opacity: var(--o, 1);
+  transform: none;
+}
+.no-reveal [data-reveal] .unit-cell {
+  opacity: var(--o, 1) !important;
+  transform: none !important;
+}
+/* To'lgan katak bir marta «nur sochadi» — ko'z diagrammaning asosiy ma'nosiga tushadi. */
+@keyframes unit-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.3);
+    opacity: 0;
+  }
+}
+.unit-on::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-sun);
+  opacity: 0;
+  pointer-events: none;
+}
+.js [data-reveal][data-inview] .unit-on::after {
+  animation: unit-ping 1.6s var(--ease-out-quart) 2;
+  animation-delay: calc(900ms + var(--i, 0) * 14ms);
+}
+
 /* ---------- Hero: CSS animatsiyalari (JS kutmaydi, LCP'ni kechiktirmaydi) ---------- */
 @keyframes rise {
   from {
@@ -261,5 +307,13 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .js [data-reveal] .unit-cell {
+    opacity: var(--o, 1);
+    transform: none;
+    transition: none;
+  }
+  .js [data-reveal][data-inview] .unit-on::after {
+    animation: none;
   }
 }

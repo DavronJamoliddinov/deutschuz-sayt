@@ -1,0 +1,102 @@
+<!doctype html>
+<!--
+  Yangilik maqolasining ijtimoiy tarmoq rasmi (1200×630) — Telegram, Facebook va boshqalarda havola ulashilganda chiqadi.
+  Matn va raqamlar manzil parametrlaridan olinadi (src/content/news.ts dagi maqola bilan bir xil). Qayta yaratish:
+  README.md → «Yangiliklar».
+    kind=units: total, filled, big, small, legend      kind=path: steps, step, goal, note
+    umumiy: title, cat, date
+-->
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Onest"; src: url("../../src/app/fonts/onest-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: "Inter"; src: url("../../src/app/fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: #101a35; color: #f8f8f5; font-family: Inter, sans-serif; position: relative;
+    background-image:
+      radial-gradient(55% 70% at 92% 8%, rgba(255, 212, 71, 0.15), transparent 60%),
+      radial-gradient(50% 60% at 60% 120%, rgba(240, 100, 85, 0.14), transparent 60%),
+      radial-gradient(70% 80% at 0% 0%, #1d2f5c, transparent 60%);
+  }
+  .grid { position: absolute; inset: 0; background-image: linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 64px 64px; -webkit-mask-image: radial-gradient(ellipse 80% 80% at 40% 40%, #000 30%, transparent 75%); }
+  .wrap { position: relative; display: flex; height: 100%; padding: 56px 64px; gap: 56px; }
+  .left { flex: 1.3; display: flex; flex-direction: column; min-width: 0; }
+  .brand { display: flex; align-items: center; gap: 14px; font-family: Onest; font-weight: 600; font-size: 28px; letter-spacing: -0.03em; }
+  .brand b { color: #ffd447; font-weight: 600; }
+  .meta { margin-top: 36px; display: flex; align-items: center; gap: 16px; font-size: 21px; color: rgba(248,248,245,.72); }
+  .pill { background: rgba(255,212,71,.15); color: #ffd447; border-radius: 999px; padding: 8px 16px; font-size: 16px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
+  h1 { margin-top: 22px; font-family: Onest; font-weight: 600; font-size: 56px; line-height: 1.07; letter-spacing: -0.038em; }
+  .url { margin-top: auto; font-size: 20px; color: rgba(248,248,245,.6); letter-spacing: -0.005em; }
+  .right { flex: 0.85; display: flex; flex-direction: column; justify-content: center; gap: 26px; padding-left: 52px; border-left: 1.5px solid rgba(255,255,255,.1); }
+  .big { font-family: Onest; font-weight: 600; letter-spacing: -0.045em; line-height: 1; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .big .a { font-size: 92px; color: #ffd447; }
+  .big .b { font-size: 40px; color: rgba(248,248,245,.55); }
+  .cells { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; }
+  .cell { aspect-ratio: 1; border-radius: 24%; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.09); }
+  .cell.on { background: #ffd447; box-shadow: 0 0 26px -4px rgba(255,212,71,.8); }
+  .legend { display: flex; align-items: center; gap: 10px; font-size: 19px; color: rgba(248,248,245,.68); }
+  .legend i { width: 15px; height: 15px; border-radius: 4px; background: #ffd447; flex: none; }
+  .bars { display: flex; align-items: center; gap: 8px; }
+  .bar { flex: 1; height: 14px; border-radius: 999px; background: #ffd447; }
+  .goal { width: 72px; height: 72px; flex: none; margin-left: 8px; border-radius: 50%; background: #ffd447; color: #101a35; display: grid; place-items: center; font-family: Onest; font-weight: 600; font-size: 26px; box-shadow: 0 0 30px -4px rgba(255,212,71,.85); }
+  .ends { display: flex; justify-content: space-between; padding-right: 88px; margin-top: -12px; font-size: 17px; color: rgba(248,248,245,.55); }
+  .note { font-size: 21px; line-height: 1.4; color: rgba(248,248,245,.75); }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="wrap">
+    <div class="left">
+      <div class="brand">
+        <img src="../../assets/brand/deutschuz-logo-mark-512.png" width="54" height="54" alt="">
+        <span>Deutsch<b>Uz</b></span>
+      </div>
+      <div class="meta"><span class="pill" id="cat"></span><span id="date"></span></div>
+      <h1 id="title"></h1>
+      <div class="url">deutschuz.com/yangiliklar</div>
+    </div>
+    <div class="right" id="visual"></div>
+  </div>
+  <script>
+    const q = new URLSearchParams(location.search);
+    const el = (tag, cls, text) => { const node = document.createElement(tag); if (cls) node.className = cls; if (text) node.textContent = text; return node; };
+    document.getElementById("cat").textContent = q.get("cat") || "";
+    document.getElementById("date").textContent = q.get("date") || "";
+    const title = document.getElementById("title");
+    title.textContent = q.get("title") || "";
+    const visual = document.getElementById("visual");
+
+    if (q.get("kind") === "path") {
+      const steps = Number(q.get("steps") || 8);
+      const big = el("div", "big");
+      big.append(el("span", "a", `${steps} ${q.get("step") || ""}`), el("span", "b", "→"), el("span", "a", q.get("goal") || ""));
+      big.firstChild.style.color = "#f8f8f5";
+      const bars = el("div", "bars");
+      for (let i = 0; i < steps; i++) { const bar = el("span", "bar"); bar.style.opacity = String(0.3 + (0.7 * (i + 1)) / steps); bars.append(bar); }
+      bars.append(el("span", "goal", q.get("goal") || ""));
+      const ends = el("div", "ends");
+      ends.append(el("span", "", `1-${q.get("step") || ""}`), el("span", "", `${steps}-${q.get("step") || ""}`));
+      visual.append(big, bars, ends, el("p", "note", q.get("note") || ""));
+    } else {
+      const total = Number(q.get("total") || 0), filled = Number(q.get("filled") || 0);
+      const big = el("div", "big");
+      big.append(el("span", "a", q.get("big") || ""), el("span", "b", q.get("small") || ""));
+      const cells = el("div", "cells");
+      for (let i = 0; i < total; i++) cells.append(el("span", i < filled ? "cell on" : "cell"));
+      const legend = el("div", "legend");
+      legend.append(el("i"), el("span", "", q.get("legend") || ""));
+      visual.append(big, cells, legend);
+    }
+
+    // Sarlavha joyiga sig'maguncha shrift kichrayadi (uzun sarlavha pastdagi manzilni bosmasin).
+    document.fonts.ready.then(() => {
+      let size = 56;
+      while (title.scrollHeight > 300 && size > 38) { size -= 2; title.style.fontSize = `${size}px`; }
+      document.body.dataset.ready = "1";
+    });
+  </script>
+</body>
+</html>

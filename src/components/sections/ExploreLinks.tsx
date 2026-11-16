@@ -12,7 +12,7 @@ export function ExploreLinks() {
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-line" />
       <div className="container-page">
         <SectionHeader id="explore-title" eyebrow={explore.eyebrow} title={explore.title} lead={explore.lead} />
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-5">
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
           {navLinks.map((link, index) => (
             <li key={link.href} data-reveal style={{ "--reveal-delay": `${index * 60}ms` } as CSSProperties}>
               <Link
