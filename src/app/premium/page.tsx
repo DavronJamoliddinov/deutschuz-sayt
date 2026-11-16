@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Info } from "lucide-react";
 import { site } from "@/config/site";
-import { premiumNotes, premiumPage, premiumSteps } from "@/content/premium";
+import { premiumLegal, premiumNotes, premiumPage, premiumSteps } from "@/content/premium";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { PremiumCheckout } from "@/components/sections/PremiumCheckout";
@@ -50,6 +50,25 @@ export default function PremiumPage() {
                   </li>
                 ))}
               </ul>
+              {site.termsUrl && (
+                <nav aria-labelledby="premium-legal" className="mt-5 border-t border-ink/[0.08] pt-4">
+                  <h3 id="premium-legal" className="text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-3">
+                    {premiumLegal.title}
+                  </h3>
+                  <ul className="mt-2 grid gap-1 text-[14.5px] leading-relaxed">
+                    {premiumLegal.links.map((link) => (
+                      <li key={link.anchor}>
+                        <a
+                          href={`${site.termsUrl}${link.anchor}`}
+                          className="inline-flex min-h-9 items-center font-medium text-ink-2 underline decoration-ink/25 underline-offset-[3px] hover:decoration-ink"
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              )}
             </div>
             <div>
               <p className="text-[14.5px] leading-relaxed text-ink-2">{supportCopy.paymentHelp}</p>

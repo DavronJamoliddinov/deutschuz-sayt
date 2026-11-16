@@ -34,14 +34,16 @@ Har bo'lim — o'z manzili bilan alohida sahifa:
 
 | Manzil | Sahifa |
 |---|---|
-| `/` | Bosh sahifa: hero, raqamlar, yondashuv, so'z demosi, ilova ekranlari, imtihon, bo'limlarga havolalar |
+| `/` | Bosh sahifa: hero, raqamlar, asosiy yangilik, yondashuv, so'z demosi, ilova ekranlari, imtihon, bo'limlarga havolalar |
 | `/imkoniyatlar/` | Barcha imkoniyatlar va o'qish matni namunasi (so'z bosilsa — tarjimasi shu yerda chiqadi) |
 | `/qanday-ishlaydi/` | Uch qadam: daraja, kunlik maqsad, takrorlash |
 | `/darajalar/` | A1 → C1 yo'l xaritasi (tayyor bo'lmagan kontent «tayyorlanmoqda» deb belgilangan) |
 | `/narxlar/` | Bepul va Premium, 4 reja, so'mda taxminiy summa |
+| `/yangiliklar/` | Yangiliklar: asosiy xabar, barcha maqolalar, tahririyat qoidalari; RSS — `/yangiliklar/rss.xml` |
+| `/yangiliklar/<slug>/` | Maqola: asosiy raqamlar, matn (har fakt yonida manba), mundarija, ulashish, manbalar ro'yxati |
 | `/savollar/` | Ko'p so'raladigan savollar |
 | `/yuklab-olish/` | Qurilma avtomatik aniqlanadi (iPhone / Android / kompyuter), boshqasini qo'lda tanlash mumkin |
-| `/premium/` | Saytdagi bir martalik Premium to'lovi: so'mda (yonida dollar), Uzcard/Humo, Payme — menyuda yo'q (pastga qarang) |
+| `/premium/` | Saytdagi bir martalik Premium to'lovi: so'mda (Google Play obunasi narxida), Uzcard/Humo, Payme — menyuda yo'q (pastga qarang) |
 
 - Har sahifa — alohida HTML fayl (`out/<sahifa>/index.html`, `trailingSlash: true`): to'g'ridan-to'g'ri manzil,
   yangilash (F5) va «Orqaga / Oldinga» istalgan statik hostingda ishlaydi. Sahifalar orasida o'tish — Next.js `Link`
@@ -61,9 +63,9 @@ tayyorlanmoqda). Saytdagi o'qish namunasi — shu ishlashni ko'rsatuvchi bitta q
 ### Saytdagi to'lov (`/premium/`, 2026-10-23)
 
 Loyiha egasi qarori: Premium saytda ham sotiladi — **bir martalik to'lov** (obuna emas, kartadan avtomatik pul
-yechilmaydi), 1/3/6 oy yoki 1 yil, narx **so'mda** (yonida do'kondagi dollar narxi), Uzcard/Humo, Payme orqali. Ilovada
+yechilmaydi), 1/3/6 oy yoki 1 yil, narx **so'mda** (Google Play obunasi bilan bir xil), Uzcard/Humo, Payme orqali. Ilovada
 bu sahifaga havola yo'q (do'kon qoidalari). Sahifa brauzerda ilova serverining `/v1/pay/*` API'sini chaqiradi
-(`ai_proxy/payments.py`, qo'llanma ilova loyihasidagi `docs/payments.md`, 9-bo'lim): narxlar va rejalar serverdan keladi,
+(`backend/ai_proxy/payments.py`, qo'llanma ilova loyihasidagi `docs/payments.md`, 9-bo'lim): narxlar va rejalar serverdan keladi,
 karta faqat to'lov so'rovida uzatiladi (serverda saqlanmaydi), SMS kod, natija. Serverda sayt va API bitta domenda
 (Caddy `deutschuz.com/v1/pay/*` ni ilova serveriga uzatadi) — CORS kerak emas.
 
@@ -94,8 +96,10 @@ $env:SITE_URL = "https://deutschuz.uz"; $env:APP_STORE_URL = "https://apps.apple
 Kompyuter (Windows / macOS) versiyasi yo'q — ilova faqat telefon uchun (`CLAUDE.md`, 1-bo'lim). Kompyuterdan kirgan
 foydalanuvchiga shu aniq aytiladi va sahifa havolasi telefonda ochish uchun beriladi; soxta «yuklab olish» tugmasi yo'q.
 
-Narxlar bo'limidagi so'mdagi taxminiy summa build paytida Markaziy bank kursi bo'yicha hisoblanadi (`cbu.uz` ochiq JSON);
-tarmoq bo'lmasa — oxirgi qayd etilgan kurs (11 821, 30.09.2026). Kurs sanasi sahifada ko'rsatiladi.
+Narxlar so'mda (`src/content/pricing.ts`): Google Play'dagi obunalar O'zbekistonda so'mda qo'yilgan va saytdagi bir martalik
+to'lov (Payme) — xuddi shu summalar (59 000 / 142 000 / 236 000 / 355 000). Narx o'zgarsa — Play Console, ilova serveridagi
+`WEB_PRICES_UZS` va shu fayl birga. (2026-11-16 gacha sayt dollar narxini va Markaziy bank kursi bo'yicha taxminiy so'mni
+ko'rsatardi — Play'da narx so'mda bo'lgach olib tashlandi.)
 
 ## Matnlarni tahrirlash
 
@@ -109,6 +113,7 @@ Barcha matnlar va raqamlar kodga tegmasdan tahrirlanadi — `src/content/`:
 | `download.ts` | Yuklab olish bloki: platformalar, «hali yoʻq» va kompyuter matnlari |
 | `reading.ts` | O'qish namunasi: matn, gap tarjimalari, so'zlar lug'ati |
 | `support.ts` | Qo'llab-quvvatlash: email va Telegram (footer, «Savollar» → `#aloqa` — App Store «Support URL», `/premium/`) |
+| `news.ts` | Yangiliklar: maqolalar, manbalar, sahifa matnlari (pastda «Yangiliklar») |
 | `features.ts`, `demo.ts`, `levels.ts`, `showcase.ts`, `exam.ts`, `pricing.ts`, `faq.ts` | Tegishli bo'limlar |
 
 - O'zbek imlosi: `oʻ`, `gʻ` — U+02BB (`ʻ`), tutuq belgisi — U+02BC (`ʼ`), qo'shtirnoq — `«…»`.
@@ -116,12 +121,37 @@ Barcha matnlar va raqamlar kodga tegmasdan tahrirlanadi — `src/content/`:
 - Saytda faqat tasdiqlangan ma'lumot: foydalanuvchilar soni, reyting, sharhlar yo'q. Tayyor bo'lmagan kontent
   «tayyorlanmoqda» deb belgilangan (B2/C1 o'qish matnlari).
 
+## Yangiliklar (2026-11-16)
+
+Germaniyada ishlash va o'qish, nemis tili va imtihonlarga oid xabarlar — **faqat manbasi bor faktlar**. Maqolalar
+`src/content/news.ts` da (kodga tegmasdan), sahifalar build'da yaratiladi: ro'yxat, har maqola, bosh sahifadagi blok,
+`sitemap.xml` (maqola sanasi bilan), RSS va qidiruv tizimlari uchun `NewsArticle` (JSON-LD, manbalar — `isBasedOn`).
+
+**Tahririyat qoidalari** (sahifada ham yozilgan — o'zgartirsangiz, ikkalasini birga):
+- Avval davlat organining o'z sahifasi (president.uz, gov.uz, Migratsiya agentligi), keyin ishonchli nashr. Har bir
+  maqolada `sources`, faktlar yonida `cite` — o'sha ro'yxatdagi tartib raqami (0 dan); sahifada nashr nomi bilan belgi.
+- Manbada yo'q narsa fakt sifatida yozilmaydi. Maslahat — maslahat ekani matndan ko'rinadi («…oʻrganib olsangiz…»).
+- Begona surat va logotip yo'q: kartochka va ijtimoiy tarmoq rasmi — xabarning asosiy raqami (`cover`).
+- Saytda ishga joylashtirish va'da qilinmaydi: har maqola oxirida «biz vakansiya qabul qilmaymiz» izohi.
+
+**Yangi maqola:**
+1. `news.ts` → `news` ro'yxatiga obyekt: `slug` (kichik lotin harflari va «-»), `date`, `category`, `title`, `summary`
+   (≤ 200 belgi), `lead`, `stats` (4 ta), `cover`, `body` (bloklar: `h2`, `p`, `list`, `units`, `steps`, `callout`,
+   `app`), `sources`. Matnda faqat `**qalin**` va `[havola](/ichki/)` yoki `[havola](https://…)`.
+   Bosh sahifa va ro'yxat boshida chiqadigani — `featured: true` (bitta), bo'lmasa eng yangisi.
+2. Ijtimoiy tarmoq rasmi: `ogImage: "/og/news-<slug>.png"` va `node scripts/news-og.mjs <slug>` — shablon
+   `scripts/brand/news-og.html`, Chrome bilan (boshqa brauzer: `CHROME=...`). Telegram havolani shu rasm bilan ko'rsatadi.
+3. `npm run check`. Build tekshiruvi (`src/lib/news.ts`) to'xtaydi: takror slug, noto'g'ri sana, mavjud bo'lmagan
+   manba raqami, https bo'lmagan havola, mavjud bo'lmagan maqolaga ichki havola, manbasiz maqola.
+4. Tuzatish kiritilsa — `updated: "YYYY-MM-DD"` (sahifada «yangilandi» va sitemap sanasi).
+
 ## Tuzilma
 
 ```
 src/
   app/            layout (navbar, footer, shriftlar, metadata), bosh sahifa, ichki sahifalar (imkoniyatlar/,
-                  qanday-ishlaydi/, darajalar/, narxlar/, savollar/, yuklab-olish/), 404, robots.ts, sitemap.ts,
+                  qanday-ishlaydi/, darajalar/, narxlar/, yangiliklar/ (+[slug]/, rss.xml/), savollar/,
+                  yuklab-olish/), 404, robots.ts, sitemap.ts,
                   ikonkalar (icon.png, apple-icon.png), globals.css (dizayn tokenlari)
   assets/brand/   logotip belgisi (128 px) — next/image orqali
   config/site.ts  manzillar (yuqoridagi jadval) va do'kon havolasi tekshiruvi
@@ -130,14 +160,16 @@ src/
     layout/       Navbar (joriy sahifa, mobil menyu), Footer
     sections/     Hero, FactsBand, Approach, Features, VocabularyDemo (+DemoWidget), HowItWorks, LearningPath
                   (+LevelTrack), ProductShowcase, ExamPrep, Pricing, FAQ (+Accordion), ReadingSpotlight (+ReadingDemo),
-                  ExploreLinks, FinalCTA
+                  ExploreLinks, NewsSpotlight, FinalCTA
+    news/         yangiliklar: kartochkalar, vizual (UnitGrid — katakchalar), maqola qismlari, ulashish, matn belgilash
     mockups/      ilova ekranlari (HTML/CSS bilan chizilgan, ilovaning dizayn tiliga mos), telefon ramkasi
     motion/       MotionProvider, scroll-reveal kuzatuvchisi, sahifa ichidagi (#) havolalar, sanash, parallaks
     ui/           tugma, logotip, bo'lim sarlavhasi, sahifa sarlavhasi (PageHeader), yuklab olish bloki (DownloadOptions)
-  lib/            yordamchilar (format, kurs, metadata, tipografiya, media query)
+  lib/            yordamchilar (format, metadata, tipografiya, media query, news — sana, saralash, build tekshiruvi)
 assets/brand/     rasmiy logotipning asl fayli va 512 px belgisi (og.png shabloni uchun)
-public/           og.png (ijtimoiy tarmoqlar uchun rasm), _headers, kirill shrift qismlari
-scripts/          preview.mjs (lokal server), fix-export-segments.mjs (build'dan keyin), brand/og.html
+public/           og.png (ijtimoiy tarmoqlar uchun rasm), og/news-*.png (maqolalar rasmi), _headers, kirill shrift qismlari
+scripts/          preview.mjs (lokal server), fix-export-segments.mjs (build'dan keyin), news-og.mjs (maqola rasmlari),
+                  brand/og.html, brand/news-og.html
 ```
 
 ## Dizayn tizimi

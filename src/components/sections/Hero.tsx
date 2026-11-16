@@ -1,13 +1,14 @@
 import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { Check } from "lucide-react";
-import { hero } from "@/content/home";
+import { hero, storeStatus } from "@/content/home";
+import type { StoreState } from "@/config/site";
 import { startCta } from "@/content/navigation";
 import { ButtonLink } from "@/components/ui/Button";
 import { HeroVisual } from "./HeroVisual";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
-export function Hero({ storesAvailable }: { storesAvailable: boolean }) {
+export function Hero({ stores, webApp = false }: { stores: StoreState; webApp?: boolean }) {
   return (
     <section id="top" aria-labelledby="hero-title" className="surface-dark relative isolate overflow-hidden bg-navy-900 text-paper">
       <Backdrop />
@@ -21,7 +22,7 @@ export function Hero({ storesAvailable }: { storesAvailable: boolean }) {
               <span className="ping-soft absolute inset-0 rounded-full bg-sun" />
               <span className="relative size-2 rounded-full bg-sun" />
             </span>
-            {storesAvailable ? hero.statusLive : hero.statusSoon}
+            {storeStatus(stores, webApp)}
           </p>
 
           <h1

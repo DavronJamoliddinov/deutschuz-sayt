@@ -1,21 +1,21 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Info } from "lucide-react";
-import { site } from "@/config/site";
+import { site, storeState } from "@/config/site";
 import { premiumPage } from "@/content/premium";
-import { freeTier, plans, premiumTier, pricingIntro, pricingNotes, savingsPercent } from "@/content/pricing";
+import { freeTier, perMonthUzs, plans, premiumTier, pricingIntro, pricingNotes, savingsPercent } from "@/content/pricing";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import type { UsdRate } from "@/lib/rate";
-import { approxSum, dmy, groupDigits, usd } from "@/lib/format";
+import { groupDigits } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
 /**
  * withHeader={false} — alohida sahifada: sarlavha PageHeader'da (h1), bu yerda faqat kontent, rejalar h2.
- * Saytdagi to'lov jonli bo'lsa (site.webPayments) reja kartasi /premium ga, shu reja tanlangan holda olib boradi.
+ * Narxlar so'mda (Google Play obunasi va saytdagi to'lov — bir xil). Saytdagi to'lov jonli bo'lsa (site.webPayments)
+ * reja kartasi /premium ga, shu reja tanlangan holda olib boradi.
  */
-export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader?: boolean }) {
+export function Pricing({ withHeader = true }: { withHeader?: boolean }) {
   const Heading = withHeader ? "h3" : "h2";
-  const sumNote = pricingNotes.sum.replace("{rate}", groupDigits(rate.rate)).replace("{date}", dmy(rate.date));
+  const notes = pricingNotes(storeState, site.webPayments);
 
   return (
     <section
@@ -39,7 +39,9 @@ export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader
             </Heading>
             <p className="mt-4 flex items-baseline gap-2">
               <span className="font-display text-[56px] font-semibold leading-none tracking-[-0.045em]">{freeTier.price}</span>
-              <span className="text-[16px] text-ink-3">{freeTier.period}</span>
+              <span className="text-[16px] text-ink-3">
+                {freeTier.currency} · {freeTier.period}
+              </span>
             </p>
             <ul className="mt-8 space-y-3.5">
               {freeTier.items.map((item) => (
@@ -84,7 +86,7 @@ export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader
               ))}
             </ul>
 
-            <ul className="mt-10 grid grid-cols-2 gap-3 pt-3 sm:grid-cols-4">
+            <ul className="mt-10 grid grid-cols-1 gap-x-3 gap-y-5 pt-3 min-[360px]:grid-cols-2 min-[360px]:gap-y-3 sm:grid-cols-4">
               {plans.map((plan) => {
                 const savings = savingsPercent(plan);
                 const card = cn(
@@ -114,11 +116,11 @@ export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader
                         </span>
                       )}
                     </span>
-                    <span className="mt-3 font-display text-[26px] font-semibold leading-none tracking-[-0.035em] tabular-nums">
-                      {usd(plan.price)}
+                    <span className="mt-3 whitespace-nowrap font-display text-[clamp(1.35rem,1.1rem+0.7vw,1.6rem)] font-semibold leading-none tracking-[-0.035em] tabular-nums">
+                      {groupDigits(plan.uzs)}
                     </span>
-                    <span className={cn("mt-1.5 text-[12.5px] tabular-nums", plan.featured ? "text-ink-3" : "text-paper/60")}>
-                      {approxSum(plan.price, rate.rate)}
+                    <span className={cn("mt-1.5 text-[12.5px]", plan.featured ? "text-ink-3" : "text-paper/60")}>
+                      {premiumTier.currency}
                     </span>
                     <span
                       className={cn(
@@ -126,7 +128,7 @@ export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader
                         plan.featured ? "border-ink/10 text-ink-2" : "border-white/10 text-paper/70",
                       )}
                     >
-                      {premiumTier.perMonth} {usd(plan.price / plan.months)}
+                      {premiumTier.perMonth} {perMonthUzs(plan)}
                     </span>
                     {site.webPayments && (
                       <span
@@ -158,7 +160,7 @@ export function Pricing({ rate, withHeader = true }: { rate: UsdRate; withHeader
         </div>
 
         <ul data-reveal className="mx-auto mt-8 grid max-w-[60rem] gap-2.5 text-[13.5px] leading-relaxed text-ink-3">
-          {[pricingNotes.base, sumNote, pricingNotes.billing].map((note) => (
+          {notes.map((note) => (
             <li key={note} className="flex gap-2.5">
               <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
               {note}

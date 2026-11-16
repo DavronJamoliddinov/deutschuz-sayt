@@ -25,6 +25,11 @@ export const navLinks: NavLink[] = typo([
     description: "Bepul imkoniyatlar va Premium obuna rejalari.",
   },
   {
+    href: "/yangiliklar",
+    label: "Yangiliklar",
+    description: "Germaniyada ishlash va oʻqish, nemis tili va imtihonlar — rasmiy manbalar asosida.",
+  },
+  {
     href: "/savollar",
     label: "Savollar",
     description: "Ilova, darajalar va obuna haqida qisqa javoblar.",

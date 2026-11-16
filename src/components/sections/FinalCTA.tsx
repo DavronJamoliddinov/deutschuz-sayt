@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import { finalCta } from "@/content/home";
-import { site, storesAvailable } from "@/config/site";
+import { finalCta, finalCtaText } from "@/content/home";
+import { site, storeState } from "@/config/site";
 import { DownloadOptions } from "@/components/ui/DownloadOptions";
 import { Phone } from "@/components/mockups/Phone";
 import { HomeScreen } from "@/components/mockups/screens/HomeScreen";
@@ -34,10 +34,10 @@ export function FinalCTA() {
             {finalCta.title}
           </h2>
           <p data-reveal style={{ "--reveal-delay": "140ms" } as CSSProperties} className="mt-6 max-w-[34rem] text-[17.5px] leading-[1.65] text-paper/70">
-            {storesAvailable ? finalCta.textLive : finalCta.textSoon}
+            {finalCtaText(storeState, Boolean(site.webAppUrl))}
           </p>
           <div data-reveal style={{ "--reveal-delay": "210ms" } as CSSProperties} className="mt-9">
-            <DownloadOptions appStoreUrl={site.appStoreUrl} googlePlayUrl={site.googlePlayUrl} />
+            <DownloadOptions appStoreUrl={site.appStoreUrl} googlePlayUrl={site.googlePlayUrl} webAppUrl={site.webAppUrl} />
           </div>
         </div>
 

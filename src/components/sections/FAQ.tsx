@@ -1,12 +1,12 @@
 import { faqIntro, getFaq } from "@/content/faq";
-import { site } from "@/config/site";
+import { site, type StoreState } from "@/config/site";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Accordion } from "./Accordion";
 import { cn } from "@/lib/cn";
 
 /** withHeader={false} — alohida sahifada: sarlavha PageHeader'da (h1), savollar (h2) markazda bitta ustunda. */
-export function FAQ({ storesAvailable, withHeader = true }: { storesAvailable: boolean; withHeader?: boolean }) {
-  const items = getFaq({ storesAvailable, webPayments: site.webPayments });
+export function FAQ({ stores, withHeader = true }: { stores: StoreState; withHeader?: boolean }) {
+  const items = getFaq({ stores, webPayments: site.webPayments, webApp: Boolean(site.webAppUrl) });
 
   if (!withHeader) {
     return (

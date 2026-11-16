@@ -10,9 +10,12 @@ const linkClass =
   "rounded underline decoration-paper/30 underline-offset-[3px] transition-colors hover:text-paper hover:decoration-sun";
 
 export function Footer({ privacyUrl, termsUrl }: { privacyUrl: string | null; termsUrl: string | null }) {
+  // Oferta — foydalanish shartlari ham (ilova va do'konlar shu sahifaga havola qiladi); to'lov va qaytarish bo'limlari
+  // alohida havola bilan — bank va to'lov tizimlari saytni tekshirganda darhol topilsin.
   const legal = [
+    termsUrl ? { href: termsUrl, label: "Ommaviy oferta" } : null,
+    termsUrl ? { href: `${termsUrl}#s6`, label: "Toʻlov va pulni qaytarish" } : null,
     privacyUrl ? { href: privacyUrl, label: "Maxfiylik siyosati" } : null,
-    termsUrl ? { href: termsUrl, label: "Foydalanish shartlari" } : null,
   ].filter((item): item is { href: string; label: string } => item !== null);
 
   return (

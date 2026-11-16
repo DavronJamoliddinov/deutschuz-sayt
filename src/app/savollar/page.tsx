@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { faqIntro } from "@/content/faq";
-import { storesAvailable } from "@/config/site";
+import { storeState } from "@/config/site";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FAQ } from "@/components/sections/FAQ";
@@ -19,7 +19,7 @@ export default function FaqPage() {
   return (
     <main id="asosiy" tabIndex={-1} className="outline-none">
       <PageHeader id="page-title" crumb="Savollar" eyebrow={faqIntro.eyebrow} title={faqIntro.title} lead={faqIntro.lead} />
-      <FAQ storesAvailable={storesAvailable} withHeader={false} />
+      <FAQ stores={storeState} withHeader={false} />
       {/* App Store Connect «Support URL»: https://deutschuz.com/savollar/#aloqa */}
       <section id="aloqa" aria-labelledby="aloqa-title" className="relative scroll-mt-28 bg-paper-2 pb-16 sm:pb-20 lg:pb-24">
         <div className="container-page">

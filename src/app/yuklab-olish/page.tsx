@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BookOpen, CreditCard, Smartphone } from "lucide-react";
 import { downloadPage } from "@/content/navigation";
-import { site, storesAvailable } from "@/config/site";
+import { storeNames } from "@/content/home";
+import { site, storeState } from "@/config/site";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DownloadOptions } from "@/components/ui/DownloadOptions";
@@ -10,12 +11,19 @@ import { DownloadOptions } from "@/components/ui/DownloadOptions";
 export const metadata: Metadata = pageMetadata({
   path: "/yuklab-olish",
   title: "Yuklab olish",
-  description: storesAvailable
-    ? "DeutschUz ilovasini yuklab oling: iPhone uchun App Store, Android uchun Google Play. Lugʻat doim bepul."
-    : "DeutschUz — iPhone va Android uchun mobil ilova. App Store va Google Play sahifalari ilova chiqishi bilan shu yerda paydo boʻladi.",
+  description:
+    storeState === "both"
+      ? "DeutschUz ilovasini yuklab oling: iPhone uchun App Store, Android uchun Google Play. Lugʻat doim bepul."
+      : storeState === "play"
+        ? site.webAppUrl
+          ? "DeutschUz ilovasini Android uchun Google Playʼdan yuklab oling, iPhoneʼga esa brauzer orqali oʻrnating. App Store tez orada. Lugʻat doim bepul."
+          : "DeutschUz ilovasini Android uchun Google Playʼdan yuklab oling. iPhone uchun App Store versiyasi tez orada. Lugʻat doim bepul."
+        : site.webAppUrl
+      ? "DeutschUzʼni iPhoneʼga hozirdan oʻrnating: brauzer orqali, bir daqiqada. App Store va Google Play tez orada. Lugʻat doim bepul."
+      : "DeutschUz — iPhone va Android uchun mobil ilova. App Store va Google Play sahifalari ilova chiqishi bilan shu yerda paydo boʻladi.",
 });
 
-/** Faqat CLAUDE.md da tasdiqlangan faktlar: freemium, lug'at bepul, obuna do'kon orqali, faqat mobil ilova. */
+/** Faqat CLAUDE.md da tasdiqlangan faktlar: freemium, lug'at bepul, Premium ilova ichida, veb-ilova joylangan bo'lsa — brauzerda ham. */
 const facts = [
   {
     icon: BookOpen,
@@ -26,13 +34,17 @@ const facts = [
   {
     icon: CreditCard,
     title: "Premium — ilova ichida",
-    text: "Obuna faqat App Store yoki Google Play orqali rasmiylashtiriladi; saytda toʻlov yoʻq.",
+    text: site.webAppUrl
+      ? "Premium ilova ichida rasmiylashtiriladi: soʻmda, bir martalik toʻlov (Payme, Click, Uzum, Google Pay) — kartadan avtomatik yechilmaydi."
+      : `Obuna ilova ichida ${storeNames(storeState)} orqali rasmiylashtiriladi, narxi soʻmda.`,
     link: { href: "/narxlar", label: "Narxlar" },
   },
   {
     icon: Smartphone,
-    title: "Faqat telefon uchun",
-    text: "iPhone va Android. Kompyuter dasturi va veb-versiya chiqarilmagan.",
+    title: site.webAppUrl ? "Telefon uchun, brauzerda ham" : "Faqat telefon uchun",
+    text: site.webAppUrl
+      ? "iPhone va Android uchun. Alohida kompyuter dasturi yoʻq, lekin brauzerda ham ishlaydi: hisob va progress bir xil."
+      : "iPhone va Android. Kompyuter dasturi chiqarilmagan.",
     link: { href: "/savollar", label: "Savollar" },
   },
 ];
@@ -41,7 +53,7 @@ export default function DownloadPage() {
   return (
     <main id="asosiy" tabIndex={-1} className="outline-none">
       <PageHeader id="page-title" crumb={downloadPage.label} eyebrow={downloadPage.eyebrow} title={downloadPage.title} lead={downloadPage.lead}>
-        <DownloadOptions appStoreUrl={site.appStoreUrl} googlePlayUrl={site.googlePlayUrl} />
+        <DownloadOptions appStoreUrl={site.appStoreUrl} googlePlayUrl={site.googlePlayUrl} webAppUrl={site.webAppUrl} />
       </PageHeader>
 
       <section aria-label="Yuklab olish haqida" className="relative py-16 sm:py-20">

@@ -30,16 +30,20 @@ function storeUrl(name: string, host: string): string | null {
   return value;
 }
 
+/** Google Play'dagi ilova sahifasi (ilova 2026-11-13 da chiqdi). */
+const GOOGLE_PLAY_LISTING = "https://play.google.com/store/apps/details?id=uz.deutschuz.deutschuz";
+
 export const site = {
   name: "DeutschUz",
   /** Saytning asosiy manzili: canonical, Open Graph rasmi, sitemap. Domen ulangach yoziladi. */
   url: env("SITE_URL"),
   /**
-   * Do'kon sahifalari — ilova chiqqach to'ldiriladi (Android: applicationId `uz.deutschuz.deutschuz`).
-   * Bo'sh bo'lsa sayt havola bermaydi: «… sahifasi hali yoʻq» / «tez orada».
+   * Do'kon sahifalari (Android: applicationId `uz.deutschuz.deutschuz`). Bo'sh bo'lsa sayt havola bermaydi:
+   * «… sahifasi hali yoʻq» / «tez orada». Google Play — 2026-11-13 dan ochiq, shuning uchun sukut bo'yicha yozilgan
+   * (build sozlamasi `GOOGLE_PLAY_URL` uni almashtiradi); App Store — ilova chiqqach `APP_STORE_URL`.
    */
   appStoreUrl: storeUrl("APP_STORE_URL", "apps.apple.com"),
-  googlePlayUrl: storeUrl("GOOGLE_PLAY_URL", "play.google.com"),
+  googlePlayUrl: storeUrl("GOOGLE_PLAY_URL", "play.google.com") ?? GOOGLE_PLAY_LISTING,
   /** Ilova loyihasidagi deploy/site/ sahifalari (serverda /privacy, /terms). Joylangach yoziladi. */
   privacyUrl: env("PRIVACY_URL"),
   termsUrl: env("TERMS_URL"),
@@ -54,6 +58,19 @@ export const site = {
    * tizimlari va sitemap'da. Sinov kassasi paytida bo'sh: sahifa ochiladi, lekin hech qayerdan havola berilmaydi.
    */
   webPayments: env("WEB_PAYMENTS") === "1",
+  /**
+   * Veb-ilova (iPhone uchun o'rnatiladigan PWA, docs/webapp.md), masalan https://app.deutschuz.com. Bo'sh bo'lsa sayt unga
+   * havola bermaydi (ilova hali joylanmagan): yuklab olish bo'limi faqat do'konlar holatini ko'rsatadi.
+   */
+  webAppUrl: env("WEB_APP_URL"),
 } as const;
 
 export const storesAvailable = Boolean(site.appStoreUrl || site.googlePlayUrl);
+
+/**
+ * Qaysi do'konda chiqqan: matnlar shunga qarab yoziladi — App Store hali yo'q paytda «App Store va Google Play'da»
+ * deyilmaydi. `both` — ikkalasi, `play` / `apple` — faqat bittasi, `none` — hali hech biri.
+ */
+export type StoreState = "both" | "play" | "apple" | "none";
+export const storeState: StoreState =
+  site.appStoreUrl && site.googlePlayUrl ? "both" : site.googlePlayUrl ? "play" : site.appStoreUrl ? "apple" : "none";
