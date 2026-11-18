@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { site } from "@/config/site";
+import { channel } from "@/content/support";
 import { newsCategories, newsCopy } from "@/content/news";
 import { articlePath, getArticle, otherNews, readingMinutes, sortedNews } from "@/lib/news";
 import { pageMetadata } from "@/lib/metadata";
@@ -48,6 +49,7 @@ export default async function ArticlePage({ params }: Props) {
     "@type": "Organization",
     name: site.name,
     ...(site.url ? { url: `${site.url}/`, logo: `${site.url}/icon.png` } : {}),
+    sameAs: [channel.url],
   };
 
   return (

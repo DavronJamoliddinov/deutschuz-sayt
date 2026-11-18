@@ -6,6 +6,8 @@ import { featuredNews, sortedNews } from "@/lib/news";
 import { pageMetadata } from "@/lib/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SupportContacts } from "@/components/ui/SupportContacts";
+import { TelegramChannelCard } from "@/components/ui/TelegramChannel";
+import { channelCopy } from "@/content/support";
 import { FeaturedNews, NewsCard } from "@/components/news/NewsCards";
 import { BadgeCheck, PRINCIPLE_ICONS } from "@/components/news/principles";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -54,6 +56,12 @@ export default function NewsPage() {
           </div>
         </section>
       )}
+
+      <section aria-label={channelCopy.title} className={rest.length > 0 ? "pb-16 sm:pb-20" : "py-16 sm:py-20"}>
+        <div className="container-page" data-reveal>
+          <TelegramChannelCard />
+        </div>
+      </section>
 
       <section aria-labelledby="principles-title" className="cv-auto border-t border-line bg-paper-2 py-16 sm:py-20 [contain-intrinsic-size:auto_560px]">
         <div className="container-page grid gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-14">
