@@ -10,6 +10,19 @@ export const support = {
   telegramUrl: "https://t.me/deutschuz_admin",
 } as const;
 
+/** Telegram kanali (loyiha egasi, 2026-11-18) — qoʻllab-quvvatlash akkauntidan alohida: yangiliklar va eʼlonlar. */
+export const channel = {
+  handle: "DeutschUz_com",
+  url: "https://t.me/DeutschUz_com",
+} as const;
+
+export const channelCopy = typo({
+  title: "Telegram kanalimiz",
+  newsTitle: "Yangiliklarni Telegramʼda kuzating",
+  lead: "Germaniyada oʻqish va ishlash boʻyicha yangiliklar hamda ilova yangilanishlari — kanalimizda.",
+  join: "Kanalga oʻtish",
+} as const);
+
 export const supportCopy = typo({
   title: "Qoʻllab-quvvatlash",
   pageTitle: "Javob topmadingizmi? Bizga yozing",
