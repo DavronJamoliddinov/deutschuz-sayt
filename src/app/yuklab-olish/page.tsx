@@ -35,7 +35,7 @@ const facts = [
     icon: CreditCard,
     title: "Premium — ilova ichida",
     text: site.webAppUrl
-      ? "Premium ilova ichida rasmiylashtiriladi: soʻmda, bir martalik toʻlov (Payme, Click, Uzum, Google Pay) — kartadan avtomatik yechilmaydi."
+      ? `Premium ilova ichida: ${storeNames(storeState)} obunasi yoki Payme orqali soʻmda bir martalik toʻlov (kartadan avtomatik yechilmaydi).`
       : `Obuna ilova ichida ${storeNames(storeState)} orqali rasmiylashtiriladi, narxi soʻmda.`,
     link: { href: "/narxlar", label: "Narxlar" },
   },
