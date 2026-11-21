@@ -65,7 +65,7 @@ export function getFaq({
       answer:
         `${prices}. Obuna ilova ichida ${storeNames} orqali bank kartasi bilan rasmiylashtiriladi va istalgan vaqtda doʻkon sozlamalarida bekor qilinadi. Bepul sinov muddati yoʻq.` +
         (webApp
-          ? " iPhoneʼga brauzer orqali oʻrnatilgan ilovada Premium soʻmda: Payme, Click, Uzum yoki Google Pay bilan, bir martalik toʻlov (avtomatik yechilmaydi)."
+          ? " iPhoneʼga brauzer orqali oʻrnatilgan ilovada Premium soʻmda: Payme orqali, bir martalik toʻlov (avtomatik yechilmaydi)."
           : "") +
         (webPayments
           ? " Saytdagi «Premium» sahifasida xuddi shu narxda Payme orqali ham toʻlash mumkin — bir martalik toʻlov, avtomatik yangilanmaydi."
